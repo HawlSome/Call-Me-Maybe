@@ -6,7 +6,7 @@
 #    By: varandri <varandri@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/14 10:11:34 by varandri          #+#    #+#              #
-#    Updated: 2026/09/14 12:39:13 by varandri         ###   ########.fr        #
+#    Updated: 2026/09/14 13:30:18 by varandri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,10 @@ FLAKE8 = $(DIR)/env/bin/flake8
 MYPY = $(DIR)/env/bin/mypy
 
 run: install
-	@uv run -m src
+	@uv run python -m src \
+	--functions_definition data/input/functions_definition.json \
+	--input data/input/function_calling_tests.json \
+	--output data/output/function_calls.json
 
 install:
 	@mkdir -p $(DIR)

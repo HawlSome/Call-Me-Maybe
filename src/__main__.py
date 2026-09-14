@@ -6,11 +6,15 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/14 12:11:45 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/14 13:34:24 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-def main():
+import argparse
+
+
+def main() -> None:
+    argparse
     print("Hello from cmm!")
 
 
