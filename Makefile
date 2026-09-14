@@ -6,7 +6,7 @@
 #    By: varandri <varandri@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/14 10:11:34 by varandri          #+#    #+#              #
-#    Updated: 2026/09/14 13:30:18 by varandri         ###   ########.fr        #
+#    Updated: 2026/09/14 14:05:22 by varandri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ DIR = $(HOME)/goinfre/call_me_maybe
 
 export UV_PROJECT_ENVIRONMENT=$(DIR)/env
 export UV_CACHE_DIR=$(DIR)/.cache/uv
+export HF_HOME=$(DIR)/.llm
 
 FLAKE8 = $(DIR)/env/bin/flake8
 MYPY = $(DIR)/env/bin/mypy
