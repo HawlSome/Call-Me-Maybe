@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 22:41:53 by varandri            #+#    #+#            #
-#   Updated: 2026/09/15 23:17:42 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/16 01:01:48 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -18,11 +18,3 @@ def mask_logits(
         for i in fn_def:
             masked_logits[i] = logits[i]
     return masked_logits
-
-
-def get_best_token(masked_logits: list[float]) -> dict[int, float]:
-    best_tokens: dict[int, float] = {
-        i: masked_logits[i] for i in range(len(masked_logits))
-        if masked_logits[i] > 0
-    }
-    return best_tokens
