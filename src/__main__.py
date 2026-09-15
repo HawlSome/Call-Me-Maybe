@@ -6,14 +6,14 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/15 20:15:48 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/15 21:09:52 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
     from llm_sdk import Small_LLM_Model  # type: ignore
     from .functions import parse_args
-    from pydantic import ValidationError  # type: ignore
+    from pydantic import ValidationError
 except (ModuleNotFoundError, ImportError) as e:
     print(f"[ERROR]: {e}")
     exit()

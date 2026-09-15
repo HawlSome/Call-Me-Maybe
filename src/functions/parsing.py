@@ -6,13 +6,14 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/09/15 20:14:04 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/15 21:09:18 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 import argparse
 from json import load
 from ..classes import Function_calling, Function_definition
+from typing import cast
 
 
 def __parse() -> tuple[str, ...]:
@@ -51,9 +52,10 @@ def __store_prompts(
     for p in raw_promts:
         prompts.append(
             Function_calling(
-                prompt=p["prompt"]
+                prompt=str(p["prompt"])
             )
         )
+        print(type(p["prompt"]))
     return prompts
 
 
@@ -63,12 +65,20 @@ def __srote_function_defs(
     definitions: list[Function_definition] = []
 
     for fd in raw_fd:
+        name: str = str(fd["name"])
+        description: str = str(fd["description"])
+        parameters: dict[str, dict[str, str]] = cast(
+            dict[str, dict[str, str]], fd["parameters"]
+        )
+        returns: dict[str, str] = cast(
+            dict[str, str], fd["returns"]
+        )
         definitions.append(
             Function_definition(
-                name=fd["name"],
-                description=fd["description"],
-                parameters=fd["parameters"],
-                returns=fd["returns"]
+                name=name,
+                description=description,
+                parameters=parameters,
+                returns=returns
             )
         )
         # print(fd["description"])
