@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/09/15 21:09:18 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/15 21:13:16 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -55,7 +55,6 @@ def __store_prompts(
                 prompt=str(p["prompt"])
             )
         )
-        print(type(p["prompt"]))
     return prompts
 
 
@@ -81,7 +80,6 @@ def __srote_function_defs(
                 returns=returns
             )
         )
-        # print(fd["description"])
     return definitions
 
 
