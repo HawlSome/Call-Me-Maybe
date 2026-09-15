@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/16 00:49:34 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/16 01:24:11 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -36,4 +36,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    print()
     main()

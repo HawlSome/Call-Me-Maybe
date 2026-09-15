@@ -1,12 +1,12 @@
 # ########################################################################### #
 #                                                                             #
 #                                                          :::      ::::::::  #
-#   decoder.py                                           :+:      :+:    :+:  #
+#   func_caller.py                                       :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 00:09:28 by varandri            #+#    #+#            #
-#   Updated: 2026/09/16 00:59:19 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/16 01:23:03 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -43,8 +43,9 @@ def get_func_name(
         masked_logits: list[float] = (
             mask_logits(raw_logits, encoded_fn_def_name)
         )
-        func_name += model.decode(int(argmax(masked_logits)))
-        encoded_prompt.append(int(argmax(masked_logits)))
+        best_token: int = int(argmax(masked_logits))
+        func_name += model.decode(best_token)
+        encoded_prompt.append(best_token)
         if func_name in valid_fn_def_name:
             break
     return func_name
