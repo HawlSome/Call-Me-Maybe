@@ -6,12 +6,12 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 00:09:28 by varandri            #+#    #+#            #
-#   Updated: 2026/09/16 00:50:25 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/16 00:59:19 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 from llm_sdk import Small_LLM_Model  # type: ignore
-from ..classes import Function_definition
+from ..classes import Function_definition, Function_calling
 from ..functions import int_encoder, encode_fn_def_name, mask_logits
 from numpy import argmax
 
@@ -48,3 +48,19 @@ def get_func_name(
         if func_name in valid_fn_def_name:
             break
     return func_name
+
+
+def get_parameters(
+    model: Small_LLM_Model, func_name: str,
+    prompt: str, fn_defs: list[Function_definition]
+) -> dict[str, str]:
+    parameters: dict[str, str] = {}
+    return parameters
+
+
+def function_calling(
+    model: Small_LLM_Model, prompts: list[Function_calling],
+    fn_defs: list[Function_definition]
+) -> list[dict[str, str | dict[str, str]]]:
+    call_them_maybe: list[dict[str, str | dict[str, str]]] = []
+    return call_them_maybe
