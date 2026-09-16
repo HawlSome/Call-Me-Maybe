@@ -6,13 +6,13 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/16 01:24:11 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/16 10:27:05 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
     from llm_sdk import Small_LLM_Model  # type: ignore
-    from .functions import parse_args, get_func_name
+    from .functions import parse_args, get_func_name, get_parameters
     from pydantic import ValidationError
 except (ModuleNotFoundError, ImportError) as e:
     print(f"[ERROR]: {e}")
@@ -23,9 +23,14 @@ def main() -> None:
     try:
         prompts, fn_defs, output = parse_args()
         model = Small_LLM_Model()
-        # print(prompts[0].prompt)
-        print(get_func_name(
+        print(prompts[0].prompt)
+        func_name = get_func_name(
             model, prompts[0].prompt, fn_defs
+        )
+        print(func_name)
+        print(get_parameters(
+            model, func_name,
+            prompts[0].prompt, fn_defs
         ))
 
     except ValidationError as e:
