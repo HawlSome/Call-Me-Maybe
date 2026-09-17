@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 15:59:16 by varandri            #+#    #+#            #
-#   Updated: 2026/09/16 10:29:53 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/17 14:02:41 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -26,8 +26,9 @@ def encode_fn_def_name(
     fn_defs: list[Function_definition], encoded_fn_defs_name: list[list[int]]
 ) -> None:
     for fn_def in fn_defs:
+        func_name: str = f'{{"name": "{fn_def.name}"}}'
         encoded_fn_defs_name.append(
-            int_encoder(model, str(fn_def.name))
+            int_encoder(model, func_name)
         )
 
 

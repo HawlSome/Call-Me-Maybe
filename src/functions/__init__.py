@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:18:26 by varandri            #+#    #+#            #
-#   Updated: 2026/09/16 07:00:43 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/17 14:34:46 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -22,5 +22,5 @@ __all__ = [
     'parse_args',
     'int_encoder', 'encode_fn_def_name', 'encode_fn_struct',
     'mask_logits',
-    'get_func_name', 'get_parameters'
+    'get_func_name', 'get_parameters',
 ]
