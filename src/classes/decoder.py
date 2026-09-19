@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 23:12:32 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/20 00:25:03 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -102,9 +102,9 @@ class Decoder(BaseModel):
 
             def get_encoded_numeric_mask() -> list[int]:
                 encoded_numeric_mask: list[int] = []
-                for ch in '".,0123456789':
+                for ch in '-".,0123456789':
                     encoded_numeric_mask.extend(self.__int_encode(ch))
-                return list(set(encoded_numeric_mask))
+                return encoded_numeric_mask
 
             masked_logits = [float("-inf") for _ in logits]
             if self.state.state == States.NAME:
@@ -184,7 +184,7 @@ class Decoder(BaseModel):
 
         parameters: dict[str, Any] = {}
         param_keys: list[str] = get_keys()
-        prompt_answer: str = "{" + f'"{param_keys[0]}" : "'
+        prompt_answer: str = "{" + f'"{param_keys[0]}": '
         raw_answer: dict[str, Any] = {}
         raw_prompt = (
             "You are a parameter retriever. "
@@ -205,10 +205,10 @@ class Decoder(BaseModel):
             best_token: int = self.__get_best_token(prompt, logits)
             if self.state.type == Types.NUMBER:
                 try:
-                    if '"' in self.__decode([best_token]):
-                        prompt_answer += f'", "{param_keys[i + 1]}": "'
+                    if ',' in self.__decode([best_token]):
+                        prompt_answer += f', "{param_keys[i + 1]}": '
                         encoded_raw_prompt.extend(
-                            self.__int_encode(f'", "{param_keys[i + 1]}": "')
+                            self.__int_encode(f', "{param_keys[i + 1]}": ')
                         )
                         i += 1
                         continue
