@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/20 00:57:18 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/20 02:15:34 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -209,27 +209,41 @@ class Decoder(BaseModel):
         encoded_raw_prompt = self.__int_encode(raw_prompt)
         i = 0
         while True:
-            p_key: str = param_keys[i]
-            set_state_type(p_key)
-            logits: list[float] = self.__get_logits(encoded_raw_prompt)
-            best_token: int = self.__get_best_token(prompt, logits)
-            if self.state.type == Types.NUMBER:
-                try:
-                    if ',' in self.__decode([best_token]):
-                        prompt_answer += f', "{param_keys[i + 1]}": '
-                        encoded_raw_prompt.extend(
-                            self.__int_encode(f', "{param_keys[i + 1]}": ')
-                        )
-                        i += 1
-                        continue
-                except IndexError:
-                    prompt_answer += '"}'
-                    break
-            else:
-                encoded_raw_prompt.append(best_token)
-            print(self.__decode([best_token]), end="", flush=True)
+            try:
+                p_key: str = param_keys[i]
+                set_state_type(p_key)
+                if self.state.type == Types.STRING:
+                    encoded_raw_prompt.extend(
+                        self.__int_encode('"')
+                    )
+                    prompt_answer += '"'
+                logits: list[float] = self.__get_logits(encoded_raw_prompt)
+                best_token: int = self.__get_best_token(prompt, logits)
+                decoded_best_token: str = self.__decode([best_token])
+                print(decoded_best_token, end="", flush=True)
+                if ',' in decoded_best_token:
+                    added_prompt: str = (
+                        f'{decoded_best_token} "{param_keys[i + 1]}": '
+                    )
+                    prompt_answer += added_prompt
+                    encoded_raw_prompt.extend(
+                        self.__int_encode(added_prompt)
+                    )
+                    i += 1
+                    continue
+                if "}" in decoded_best_token:
+                    i += len(p_key)
+                    continue
+            except IndexError:
+                prompt_answer += f'{decoded_best_token}' + "}"
+                break
             encoded_raw_prompt.append(best_token)
             prompt_answer += self.__decode([best_token])
+        prompt_answer = prompt_answer.replace(",}", "}")
+        prompt_answer = prompt_answer.replace("}}", "}")
+        prompt_answer = prompt_answer.replace("}.}", "}")
+        prompt_answer = prompt_answer.replace('""', '"')
+        prompt_answer = prompt_answer.replace('" +"', '')
         print(prompt_answer)
         return parameters
 
