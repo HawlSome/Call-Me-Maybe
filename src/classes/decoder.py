@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 21:39:10 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 21:56:29 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -102,7 +102,7 @@ class Decoder(BaseModel):
 
             def get_encoded_numeric_mask() -> list[int]:
                 encoded_numeric_mask: list[int] = []
-                numeric_mask: str = '0123456789.,-"'
+                numeric_mask: str = '.,"0123456789'
                 encoded_numeric_mask.extend(self.__int_encode(numeric_mask))
                 return encoded_numeric_mask
 
@@ -197,13 +197,21 @@ class Decoder(BaseModel):
             f"{prompt_answer}"
         )
         encoded_raw_prompt = self.__int_encode(raw_prompt)
+        i = 0
         while True:
+            p_key: str = param_keys[i]
             logits: list[float] = self.__get_logits(encoded_raw_prompt)
             best_token: int = self.__get_best_token(prompt, logits)
+            if self.state.type == Types.NUMBER:
+                if i + 1 >= len(p_key):
+                    prompt_answer += "}"
+                    break
+                if '"' in self.__decode([best_token]):
+                    prompt_answer += f'", "{param_keys[i + 1]}": '
+                    i += 1
             print(self.__decode([best_token]), end="", flush=True)
+            prompt_answer += self.__decode([best_token])
             encoded_raw_prompt.append(best_token)
-        # prompt_answer
-        # raw_answer
         return parameters
 
     def function_call(self) -> None:
