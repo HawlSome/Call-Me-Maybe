@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 18:29:53 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 18:30:17 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -217,7 +217,6 @@ class Decoder(BaseModel):
             if '"' in self.__decode([best_token]):
                 prompt_answer += '", '
                 break
-            print(self.__decode(best_token))
             prompt_answer += self.__decode([best_token])
             raw_answer += self.__decode([best_token])
             encoded_raw_prompt.append(best_token)
