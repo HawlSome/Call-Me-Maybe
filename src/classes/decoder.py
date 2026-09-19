@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 23:11:24 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 23:12:32 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -148,16 +148,15 @@ class Decoder(BaseModel):
         name["prompt"] = prompt_answer
         name["raw"] = raw_answer
         self.state.state = States.PARAMS
-        print()
         return name
 
     def __decode_parameters(
-            self, func_name: dict[str, Any], prompt: str
+            self, func_name: str, prompt: str
     ) -> dict[str, Any]:
         def get_keys() -> list[str]:
             keys: list[str] = []
             param_structure: dict[str, Any] = (
-                self.__get_func_parameters(func_name["raw"])
+                self.__get_func_parameters(func_name)
             )
             keys.extend(list(param_structure.keys()))
             return keys
@@ -165,7 +164,7 @@ class Decoder(BaseModel):
         def get_type(key: str) -> str:
             k_type: str = ""
             param_structure: dict[str, Any] = (
-                self.__get_func_parameters(func_name["raw"])
+                self.__get_func_parameters(func_name)
             )
             k_type = param_structure[key]["type"]
             return k_type
@@ -185,21 +184,15 @@ class Decoder(BaseModel):
 
         parameters: dict[str, Any] = {}
         param_keys: list[str] = get_keys()
-        prompt_answer: str = (
-            func_name["prompt"] +
-            "{" + f'"{param_keys[0]}" : "'
-        )
+        prompt_answer: str = "{" + f'"{param_keys[0]}" : "'
         raw_answer: dict[str, Any] = {}
         raw_prompt = (
             "You are a parameter retriever. "
             "You will retrieve the parameters value of a function "
-            "in a given prompt. The function nae will also "
+            "in a given prompt. The function structure will also "
             "be given to you for you to take reference on. "
-            "And a function definitions will be given to you, "
-            "for you to search the function_name "
             'end each found value with a ". '
-            f"Function Name: {func_name["raw"]}"
-            f"Function Definitions: {self.__get_func_defs()}. "
+            f"Function structure: {self.__get_func_struct(func_name)}. "
             f"Prompt: {prompt}."
             f"{prompt_answer}"
         )
@@ -240,5 +233,5 @@ class Decoder(BaseModel):
             self.function_callings[0].prompt
         )
         self.__decode_parameters(
-            func_name, self.function_callings[0].prompt
+            func_name["raw"], self.function_callings[0].prompt
         )
