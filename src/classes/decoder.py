@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 20:07:27 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 21:28:09 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -150,7 +150,9 @@ class Decoder(BaseModel):
         self.state.state = States.PARAMS
         return name
 
-    def __decode_parameters(self, func_name: str) -> dict[str, Any]:
+    def __decode_parameters(
+            self, func_name: str, prompt: str
+    ) -> dict[str, Any]:
         def get_keys() -> list[str]:
             keys: list[str] = []
             param_structure: dict[str, Any] = (
@@ -167,15 +169,39 @@ class Decoder(BaseModel):
             k_type = param_structure[key]["type"]
             return k_type
 
-        def set_state_type() -> None:
-            pass
+        def set_state_type(key: str) -> None:
+            k_type: str = get_type(key).lower()
+            if k_type in "string":
+                self.state.type = Types.STRING
+            elif (
+                k_type in "number" or
+                k_type in "float" or
+                k_type in "integer"
+            ):
+                self.state.type = Types.NUMBER
+            else:
+                self.state.type = Types.STRING
 
         parameters: dict[str, Any] = {}
         param_keys: list[str] = get_keys()
-        prompt_answer: str = "{" + f'"{param_keys[0]}" :'
+        prompt_answer: str = "{" + f'"{param_keys[0]}" : "'
         raw_answer: dict[str, Any] = {}
-        prompt_answer
-        raw_answer
+        raw_prompt = (
+            "You are a parameter retriever. "
+            "You will retrieve the parameters value of a function "
+            "in a given prompt. The function structure will also "
+            "be given to you for you to take reference on. "
+            f"Function structure: {self.__get_func_struct(func_name)}. "
+            f"Prompt: {prompt}."
+            f"{prompt_answer}"
+        )
+        encoded_raw_prompt = self.__int_encode(raw_prompt)
+        while True:
+            logits: list[float] = self.__get_logits(encoded_raw_prompt)
+            best_token: int = self.__get_best_token(prompt, logits)
+            print(self.__decode([best_token]), end="", flush=True)
+        # prompt_answer
+        # raw_answer
         return parameters
 
     def function_call(self) -> None:

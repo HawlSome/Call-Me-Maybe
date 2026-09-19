@@ -1,12 +1,13 @@
+#!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   __main__.py                                          :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 11:16:02 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 20:45:58 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -26,7 +27,7 @@ def main() -> None:
             function_definitions=fn_defs,
             function_callings=prompts
         )
-        decoder.show_funcs()
+        decoder.__int_encode("asdasd")
     except ValidationError as e:
         print("Expected validation error:")
         for error in e.errors():
