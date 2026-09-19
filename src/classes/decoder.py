@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 21:28:09 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 21:39:10 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -185,6 +185,7 @@ class Decoder(BaseModel):
         parameters: dict[str, Any] = {}
         param_keys: list[str] = get_keys()
         prompt_answer: str = "{" + f'"{param_keys[0]}" : "'
+        set_state_type(param_keys[0])
         raw_answer: dict[str, Any] = {}
         raw_prompt = (
             "You are a parameter retriever. "
@@ -200,6 +201,7 @@ class Decoder(BaseModel):
             logits: list[float] = self.__get_logits(encoded_raw_prompt)
             best_token: int = self.__get_best_token(prompt, logits)
             print(self.__decode([best_token]), end="", flush=True)
+            encoded_raw_prompt.append(best_token)
         # prompt_answer
         # raw_answer
         return parameters
