@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 13:01:30 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 13:02:43 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -199,7 +199,7 @@ class Decoder(BaseModel):
     def __decode_parameters(self) -> Any:
         pass
 
-    def decode(self) -> None:
+    def function_call(self) -> None:
         pass
 
     def show_funcs(self) -> None:
