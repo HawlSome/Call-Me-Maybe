@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 11:20:48 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 11:26:20 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -116,7 +116,6 @@ class Decoder(BaseModel):
         func_struct: dict[str, Any] = {}
         for func in self.function_definitions:
             if func.name == func_name:
-                # print(func.name)
                 name = func_name
                 description = func.description
                 parameters = get_parameters(func.parameters)
@@ -127,9 +126,12 @@ class Decoder(BaseModel):
                 func_struct["returns"] = returns
         return func_struct
 
+    def __get_func_parameters(self, func_name: str) -> dict[str, Any]:
+        return self.__get_func_struct(func_name)["parameters"]
+
     def show_funcs(self) -> None:
-        # print(self.function_definitions)
         print(self.__get_func_struct("fn_greet"))
+        print(self.__get_func_parameters("fn_greet"))
 
     def __mask_logits(
         self, logits: list[float]
