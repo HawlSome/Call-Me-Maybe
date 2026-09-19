@@ -6,12 +6,11 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:18:26 by varandri            #+#    #+#            #
-#   Updated: 2026/09/18 17:20:43 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 10:06:20 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 from .parsing import parse_args
-
 
 __all__ = [
     'parse_args',

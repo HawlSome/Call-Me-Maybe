@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/18 17:31:19 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 11:20:48 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -14,7 +14,7 @@ try:
     from typing import Any
     from enum import Enum
     from pydantic import BaseModel, Field, ConfigDict, model_validator
-    from llm_sdk import Small_LLM_Model
+    from llm_sdk import Small_LLM_Model  # type: ignore
 except ModuleNotFoundError:
     raise ModuleNotFoundError
     exit()
@@ -91,7 +91,7 @@ class Decoder(BaseModel):
 
     def __get_func_def_names(self) -> list[str]:
         names: list[str] = []
-        for fd_name in self.Function_Definition:
+        for fd_name in self.function_definitions:
             fd: str = f'{{"name": "{fd_name.name}"}}'
             names.append(fd)
         return names
@@ -104,8 +104,32 @@ class Decoder(BaseModel):
             )
         return encoded_names
 
+    def __get_func_struct(self, func_name: str) -> dict[str, Any]:
+        def get_parameters(
+            func_parameters: list[Function_Parameters]
+        ) -> dict[str, Any]:
+            params: dict[str, Any] = {}
+            for param in func_parameters:
+                params[param.key] = param.value
+            return params
+
+        func_struct: dict[str, Any] = {}
+        for func in self.function_definitions:
+            if func.name == func_name:
+                # print(func.name)
+                name = func_name
+                description = func.description
+                parameters = get_parameters(func.parameters)
+                returns = func.returns
+                func_struct["name"] = name
+                func_struct["description"] = description
+                func_struct["parameters"] = parameters
+                func_struct["returns"] = returns
+        return func_struct
+
     def show_funcs(self) -> None:
-        print(self.function_definitions)
+        # print(self.function_definitions)
+        print(self.__get_func_struct("fn_greet"))
 
     def __mask_logits(
         self, logits: list[float]
