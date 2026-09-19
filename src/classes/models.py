@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 18:21:10 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 18:29:53 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -214,9 +214,10 @@ class Decoder(BaseModel):
         while True:
             logits: list[float] = self.__get_logits(encoded_raw_prompt)
             best_token: int = self.__get_best_token("", logits)
-            if self.__decode([best_token]) in ['"', "'"]:
+            if '"' in self.__decode([best_token]):
                 prompt_answer += '", '
                 break
+            print(self.__decode(best_token))
             prompt_answer += self.__decode([best_token])
             raw_answer += self.__decode([best_token])
             encoded_raw_prompt.append(best_token)
