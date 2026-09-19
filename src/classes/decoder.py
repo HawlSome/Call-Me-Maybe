@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/20 00:25:03 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/20 00:57:18 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -106,6 +106,12 @@ class Decoder(BaseModel):
                     encoded_numeric_mask.extend(self.__int_encode(ch))
                 return encoded_numeric_mask
 
+            def get_encoded_str_mask() -> list[int]:
+                encoded_str_mask: list[int] = []
+                for ch in '/"':
+                    encoded_str_mask.extend(self.__int_encode(ch))
+                return encoded_str_mask
+
             masked_logits = [float("-inf") for _ in logits]
             if self.state.state == States.NAME:
                 for enc_names in get_encoded_func_def_names():
@@ -115,6 +121,10 @@ class Decoder(BaseModel):
                 if self.state.type == Types.NUMBER:
                     for token in get_encoded_numeric_mask():
                         masked_logits[token] = logits[token]
+                if self.state.type == Types.STRING:
+                    for token in get_encoded_str_mask():
+                        logits[token] = float("-inf")
+                        masked_logits = logits
             return masked_logits
 
         masked_logits = mask_logits(logits)
@@ -185,7 +195,7 @@ class Decoder(BaseModel):
         parameters: dict[str, Any] = {}
         param_keys: list[str] = get_keys()
         prompt_answer: str = "{" + f'"{param_keys[0]}": '
-        raw_answer: dict[str, Any] = {}
+        # raw_answer: dict[str, Any] = {}
         raw_prompt = (
             "You are a parameter retriever. "
             "You will retrieve the parameters value of a function "
@@ -215,6 +225,8 @@ class Decoder(BaseModel):
                 except IndexError:
                     prompt_answer += '"}'
                     break
+            else:
+                encoded_raw_prompt.append(best_token)
             print(self.__decode([best_token]), end="", flush=True)
             encoded_raw_prompt.append(best_token)
             prompt_answer += self.__decode([best_token])
