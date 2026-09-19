@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 18:44:36 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 19:49:43 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -33,13 +33,13 @@ class Types(Enum):
     NULL = ""
 
 
-class Function_Parameters(BaseModel):
+class FunctionParameters(BaseModel):
     key: str = Field(...)
     value: dict[str, str] = Field(...)
     model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="after")
-    def value_validator(self) -> "Function_Parameters":
+    def value_validator(self) -> "FunctionParameters":
         if len(self.value) > 1:
             raise ValueError(
                 "The format of parameters in functions definition is invalid"
@@ -51,15 +51,15 @@ class Function_Parameters(BaseModel):
         return self
 
 
-class Function_Definition(BaseModel):
+class FunctionDefinition(BaseModel):
     name: str = Field(...)
     description: str = Field(...)
-    parameters: list[Function_Parameters] = Field(...)
+    parameters: list[FunctionParameters] = Field(...)
     returns: dict[str, str] = Field(...)
     model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="after")
-    def returns_validator(self) -> "Function_Definition":
+    def returns_validator(self) -> "FunctionDefinition":
         if len(self.returns) > 1:
             raise ValueError(
                 "The format of returns in functions definition is invalid"
@@ -71,12 +71,12 @@ class Function_Definition(BaseModel):
         return self
 
 
-class Function_Calling(BaseModel):
+class FunctionCalling(BaseModel):
     prompt: str = Field(...)
     model_config = ConfigDict(extra="forbid")
 
 
-class Function_Output(BaseModel):
+class FunctionOutput(BaseModel):
     prompt: str = Field(...)
     name: str = Field(...)
     parameters: dict[str, Any]
@@ -85,8 +85,8 @@ class Function_Output(BaseModel):
 
 class Decoder(BaseModel):
     model: Small_LLM_Model = Field(default=Small_LLM_Model())
-    function_definitions: list[Function_Definition] = Field(...)
-    function_callings: list[Function_Calling] = Field(...)
+    function_definitions: list[FunctionDefinition] = Field(...)
+    function_callings: list[FunctionCalling] = Field(...)
     output_file: str = Field(default="data/output/function_calls.json")
     state: dict[str, States | Types] = Field(
         default={"state": States.NAME, "type": Types.NULL}
@@ -132,9 +132,15 @@ class Decoder(BaseModel):
             names.append(fd)
         return names
 
+    def __get_func_defs(self) -> list[dict[str, Any]]:
+        func_defs: list[dict[str, Any]] = []
+        for fnd in self.function_definitions:
+            func_defs.append(self.__get_func_struct(fnd.name))
+        return func_defs
+
     def __get_func_struct(self, func_name: str) -> dict[str, Any]:
         def get_parameters(
-            func_parameters: list[Function_Parameters]
+            func_parameters: list[FunctionParameters]
         ) -> dict[str, Any]:
             params: dict[str, Any] = {}
             for param in func_parameters:
@@ -153,12 +159,6 @@ class Decoder(BaseModel):
                 func_struct["parameters"] = parameters
                 func_struct["returns"] = returns
         return func_struct
-
-    def __get_func_defs(self) -> list[dict[str, Any]]:
-        func_defs: list[dict[str, Any]] = []
-        for fnd in self.function_definitions:
-            func_defs.append(self.__get_func_struct(fnd.name))
-        return func_defs
 
     def __get_func_parameters(self, func_name: str) -> dict[str, Any]:
         param = cast(
@@ -226,18 +226,43 @@ class Decoder(BaseModel):
         self.state["state"] = States.PARAMS
         return name
 
-    def __decode_parameters(self) -> Any:
-        pass
+    def __decode_parameters(self, func_name: str) -> dict[str, Any]:
+        def get_keys() -> list[str]:
+            keys: list[str] = []
+            param_structure: dict[str, Any] = (
+                self.__get_func_parameters(func_name)
+            )
+            keys.extend(list(param_structure.keys()))
+            return keys
+
+        def get_type(key: str) -> str:
+            k_type: str = ""
+            param_structure: dict[str, Any] = (
+                self.__get_func_parameters(func_name)
+            )
+            k_type = param_structure[key]["type"]
+            return k_type
+
+        def set_state_type() -> None:
+            pass
+
+        parameters: dict[str, Any] = {}
+        param_keys: list[str] = get_keys()
+        prompt_answer: str = "{" + f'"{param_keys[0]}" :'
+        raw_answer: dict[str, Any] = {}
+        prompt_answer
+        raw_answer
+        return parameters
 
     def function_call(self) -> None:
         pass
 
     def show_funcs(self) -> None:
-        # print(self.__get_func_defs())
-        # print()
-        # print(self.__get_func_struct("fn_greet"))
-        # print(self.__get_func_parameters("fn_greet"))
-        func_name = self.__decode_name(
-            self.function_callings[0].prompt
-        )
-        print(func_name)
+        print(self.__get_func_defs())
+        print()
+        print(self.__get_func_struct("fn_greet"))
+        print(self.__get_func_parameters("fn_greet"))
+        # func_name = self.__decode_name(
+        #     self.function_callings[0].prompt
+        # )
+        # print(func_name)

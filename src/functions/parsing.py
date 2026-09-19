@@ -1,12 +1,13 @@
+#!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   parsing.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/09/18 17:25:46 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 19:49:29 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -14,8 +15,8 @@ from typing import Any
 import argparse
 from json import load
 from ..classes import (
-    Function_Parameters,
-    Function_Calling, Function_Definition
+    FunctionParameters,
+    FunctionCalling, FunctionDefinition
 )
 from typing import cast
 
@@ -49,25 +50,25 @@ def __get_json(file_name: str) -> list[
     return func_def
 
 
-def __store_prompts(raw_promts: Any) -> list[Function_Calling]:
-    prompts: list[Function_Calling] = []
+def __store_prompts(raw_promts: Any) -> list[FunctionCalling]:
+    prompts: list[FunctionCalling] = []
     for p in raw_promts:
         prompts.append(
-            Function_Calling(
+            FunctionCalling(
                 prompt=str(p["prompt"])
             )
         )
     return prompts
 
 
-def __srote_function_defs(raw_fd: Any) -> list[Function_Definition]:
-    definitions: list[Function_Definition] = []
+def __srote_function_defs(raw_fd: Any) -> list[FunctionDefinition]:
+    definitions: list[FunctionDefinition] = []
 
     for fd in raw_fd:
         name: str = str(fd["name"])
         description: str = str(fd["description"])
-        parameters: list[Function_Parameters] = [
-            Function_Parameters(
+        parameters: list[FunctionParameters] = [
+            FunctionParameters(
                 key=k,
                 value=v
             )
@@ -80,7 +81,7 @@ def __srote_function_defs(raw_fd: Any) -> list[Function_Definition]:
             dict[str, str], fd["returns"]
         )
         definitions.append(
-            Function_Definition(
+            FunctionDefinition(
                 name=name,
                 description=description,
                 parameters=parameters,
@@ -91,7 +92,7 @@ def __srote_function_defs(raw_fd: Any) -> list[Function_Definition]:
 
 
 def parse_args() -> tuple[
-    list[Function_Calling], list[Function_Definition], str
+    list[FunctionCalling], list[FunctionDefinition], str
 ]:
     func_def, input_file, output_file = __parse()
     input_content, func_def_content = (
