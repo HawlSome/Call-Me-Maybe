@@ -1,12 +1,13 @@
+#!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   models.py                                            :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 13:02:43 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 18:21:10 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -121,6 +122,9 @@ class Decoder(BaseModel):
     def __decode(self, tokens: list[int]) -> str:
         return str(self.model.decode(tokens))
 
+    def __get_logits(self, tokens: list[int]) -> list[float]:
+        return self.model.get_logits_from_input_ids(tokens)
+
     def __get_func_def_names(self) -> list[str]:
         names: list[str] = []
         for fd_name in self.function_definitions:
@@ -192,8 +196,32 @@ class Decoder(BaseModel):
         masked_logits = mask_logits(logits)
         return int(argmax(masked_logits))
 
-    def __decode_name(self) -> dict[str, str]:
+    def __decode_name(self, prompt: str) -> dict[str, str]:
         name: dict[str, str] = {}
+        prompt_answer: str = '{"name": "'
+        raw_answer: str = ""
+        raw_prompt = (
+            "You are a function selector. "
+            "You will select a function_name from "
+            "a list of given function definitions. "
+            "You will chose the function that match the one "
+            "described in a given prompt. "
+            f"Function Definitions: {self.__get_func_defs()}. "
+            f"Prompt: {prompt}."
+            f"{prompt_answer}"
+        )
+        encoded_raw_prompt = self.__int_encode(raw_prompt)
+        while True:
+            logits: list[float] = self.__get_logits(encoded_raw_prompt)
+            best_token: int = self.__get_best_token("", logits)
+            if self.__decode([best_token]) in ['"', "'"]:
+                prompt_answer += '", '
+                break
+            prompt_answer += self.__decode([best_token])
+            raw_answer += self.__decode([best_token])
+            encoded_raw_prompt.append(best_token)
+        name["prompt"] = prompt_answer
+        name["raw"] = raw_answer
         return name
 
     def __decode_parameters(self) -> Any:
@@ -203,7 +231,11 @@ class Decoder(BaseModel):
         pass
 
     def show_funcs(self) -> None:
-        print(self.__get_func_defs())
-        print()
-        print(self.__get_func_struct("fn_greet"))
-        print(self.__get_func_parameters("fn_greet"))
+        # print(self.__get_func_defs())
+        # print()
+        # print(self.__get_func_struct("fn_greet"))
+        # print(self.__get_func_parameters("fn_greet"))
+        func_name = self.__decode_name(
+            self.function_callings[0].prompt
+        )
+        print(func_name)
