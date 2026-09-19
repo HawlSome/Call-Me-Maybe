@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 12:15:06 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 12:51:46 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -24,6 +24,12 @@ except ModuleNotFoundError:
 class States(Enum):
     NAME = "name"
     PARAMS = "params"
+
+
+class Types(Enum):
+    STRING = "string"
+    NUMBER = "number"
+    NULL = ""
 
 
 class Function_Parameters(BaseModel):
@@ -81,7 +87,9 @@ class Decoder(BaseModel):
     function_definitions: list[Function_Definition] = Field(...)
     function_callings: list[Function_Calling] = Field(...)
     output_file: str = Field(default="data/output/function_calls.json")
-    state: States = Field(default=States.NAME)
+    state: dict[str, States | Types] = Field(
+        default={"state": States.NAME, "type": Types.NULL}
+    )
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __int_encode(self, string: str) -> list[int]:
@@ -134,7 +142,7 @@ class Decoder(BaseModel):
         )
         return param
 
-    def __get_best_token(self, logits: list[float]) -> int:
+    def __get_best_token(self, prompt: str, logits: list[float]) -> int:
         def mask_logits(logits: list[float]) -> list[float]:
             def get_encoded_func_def_names() -> list[list[int]]:
                 encoded_names: list[list[int]] = []
@@ -151,9 +159,13 @@ class Decoder(BaseModel):
                 return encoded_numeric_mask
 
             masked_logits = [float("-inf") for _ in logits]
-            if self.state == States.NAME:
+            if self.state["state"] == States.NAME:
                 for enc_names in get_encoded_func_def_names():
                     for token in enc_names:
+                        masked_logits[token] = logits[token]
+            if self.state["state"] == States.PARAMS:
+                if self.state["types"] == Types.NUMBER:
+                    for token in get_encoded_numeric_mask():
                         masked_logits[token] = logits[token]
             return masked_logits
 
