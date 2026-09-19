@@ -6,15 +6,16 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 11:26:20 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 12:15:06 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
-    from typing import Any
+    from typing import Any, cast
     from enum import Enum
     from pydantic import BaseModel, Field, ConfigDict, model_validator
     from llm_sdk import Small_LLM_Model  # type: ignore
+    from numpy import argmax
 except ModuleNotFoundError:
     raise ModuleNotFoundError
     exit()
@@ -83,11 +84,14 @@ class Decoder(BaseModel):
     state: States = Field(default=States.NAME)
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    def __int_encoder(self, string: str) -> list[int]:
+    def __int_encode(self, string: str) -> list[int]:
         encoded: list[int] = []
         for token in self.model.encode(string)[0]:
             encoded.append(int(token))
         return encoded
+
+    def __decode(self, tokens: list[int]) -> str:
+        return str(self.model.decode(tokens))
 
     def __get_func_def_names(self) -> list[str]:
         names: list[str] = []
@@ -95,14 +99,6 @@ class Decoder(BaseModel):
             fd: str = f'{{"name": "{fd_name.name}"}}'
             names.append(fd)
         return names
-
-    def __get_encoded_func_def_names(self) -> list[list[int]]:
-        encoded_names: list[list[int]] = []
-        for name in self.__get_func_def_names():
-            encoded_names.append(
-                self.__int_encoder(name)
-            )
-        return encoded_names
 
     def __get_func_struct(self, func_name: str) -> dict[str, Any]:
         def get_parameters(
@@ -126,22 +122,56 @@ class Decoder(BaseModel):
                 func_struct["returns"] = returns
         return func_struct
 
+    def __get_func_defs(self) -> list[dict[str, Any]]:
+        func_defs: list[dict[str, Any]] = []
+        for fnd in self.function_definitions:
+            func_defs.append(self.__get_func_struct(fnd.name))
+        return func_defs
+
     def __get_func_parameters(self, func_name: str) -> dict[str, Any]:
-        return self.__get_func_struct(func_name)["parameters"]
+        param = cast(
+            dict[str, Any], self.__get_func_struct(func_name)["parameters"]
+        )
+        return param
 
-    def show_funcs(self) -> None:
-        print(self.__get_func_struct("fn_greet"))
-        print(self.__get_func_parameters("fn_greet"))
+    def __get_best_token(self, logits: list[float]) -> int:
+        def mask_logits(logits: list[float]) -> list[float]:
+            def get_encoded_func_def_names() -> list[list[int]]:
+                encoded_names: list[list[int]] = []
+                for name in self.__get_func_def_names():
+                    encoded_names.append(
+                        self.__int_encode(name)
+                    )
+                return encoded_names
 
-    def __mask_logits(
-        self, logits: list[float]
-    ) -> list[float]:
-        masked_logits = [float("-inf") for _ in logits]
-        if self.state == States.NAME:
-            for enc_names in self.__get_encoded_func_def_names():
-                for token in enc_names:
-                    masked_logits[token] = logits[token]
-        return masked_logits
+            def get_encoded_numeric_mask() -> list[int]:
+                encoded_numeric_mask: list[int] = []
+                numeric_mask: str = '0123456789.,-"'
+                encoded_numeric_mask.extend(self.__int_encode(numeric_mask))
+                return encoded_numeric_mask
+
+            masked_logits = [float("-inf") for _ in logits]
+            if self.state == States.NAME:
+                for enc_names in get_encoded_func_def_names():
+                    for token in enc_names:
+                        masked_logits[token] = logits[token]
+            return masked_logits
+
+        masked_logits = mask_logits(logits)
+        return int(argmax(masked_logits))
+
+    def __decode_name(self) -> dict[str, str]:
+        name: dict[str, str] = {}
+        return name
+
+    def __decode_parameters(self) -> Any:
+        pass
 
     def decode(self) -> None:
         pass
+
+    def show_funcs(self) -> None:
+        print(self.__get_func_defs())
+        print()
+        print(self.__get_func_struct("fn_greet"))
+        print(self.__get_func_parameters("fn_greet"))
