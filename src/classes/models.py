@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 18:30:17 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 18:34:23 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -222,6 +222,7 @@ class Decoder(BaseModel):
             encoded_raw_prompt.append(best_token)
         name["prompt"] = prompt_answer
         name["raw"] = raw_answer
+        self.state["state"] = States.PARAMS
         return name
 
     def __decode_parameters(self) -> Any:
