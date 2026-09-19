@@ -6,7 +6,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 12:51:46 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/19 13:01:30 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -91,6 +91,26 @@ class Decoder(BaseModel):
         default={"state": States.NAME, "type": Types.NULL}
     )
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @model_validator(mode="after")
+    def state_validator(self) -> "Decoder":
+        if len(self.state) != 2:
+            raise ValueError(
+                "The format of state in Decoder is invalid."
+            )
+        try:
+            if (
+                not isinstance(self.state["state"], States) or
+                not isinstance(self.state["type"], Types)
+            ):
+                raise ValueError(
+                    "The format of state in Decoder is invalid."
+                )
+        except Exception:
+            raise ValueError(
+                "The format of state in Decoder is invalid."
+            )
+        return self
 
     def __int_encode(self, string: str) -> list[int]:
         encoded: list[int] = []
