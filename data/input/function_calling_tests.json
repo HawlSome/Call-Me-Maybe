@@ -1,15 +1,15 @@
 [
   {
+    "prompt": "What is the sum of 2 and 3 and 555?"
+  },
+  {
     "prompt": "Substitute the word 'cat' with 'dog' in 'The cat sat on the mat with another cat'"
   },
   {
     "prompt": "Greet shrek"
   },
   {
-    "prompt": "What is the square root of 16?"
-  },
-  {
-    "prompt": "What is the sum of 2 and 3 and 555?"
+    "prompt": "What is the square root of -16?"
   },
   {
     "prompt": "Greet john"
