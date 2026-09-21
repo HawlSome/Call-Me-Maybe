@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   decoder.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/20 02:15:34 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/21 11:53:40 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -161,12 +161,12 @@ class Decoder(BaseModel):
         return name
 
     def __decode_parameters(
-            self, func_name: str, prompt: str
+            self, func_name: dict[str, str], prompt: str
     ) -> dict[str, Any]:
         def get_keys() -> list[str]:
             keys: list[str] = []
             param_structure: dict[str, Any] = (
-                self.__get_func_parameters(func_name)
+                self.__get_func_parameters(func_name["raw"])
             )
             keys.extend(list(param_structure.keys()))
             return keys
@@ -174,7 +174,7 @@ class Decoder(BaseModel):
         def get_type(key: str) -> str:
             k_type: str = ""
             param_structure: dict[str, Any] = (
-                self.__get_func_parameters(func_name)
+                self.__get_func_parameters(func_name["raw"])
             )
             k_type = param_structure[key]["type"]
             return k_type
@@ -194,7 +194,7 @@ class Decoder(BaseModel):
 
         parameters: dict[str, Any] = {}
         param_keys: list[str] = get_keys()
-        prompt_answer: str = "{" + f'"{param_keys[0]}": '
+        prompt_answer: str = "{" + f'"{param_keys[0]}":'
         # raw_answer: dict[str, Any] = {}
         raw_prompt = (
             "You are a parameter retriever. "
@@ -202,9 +202,9 @@ class Decoder(BaseModel):
             "in a given prompt. The function structure will also "
             "be given to you for you to take reference on. "
             'end each found value with a ". '
-            f"Function structure: {self.__get_func_struct(func_name)}. "
+            f"Function structure: {self.__get_func_struct(func_name["raw"])}. "
             f"Prompt: {prompt}."
-            f"{prompt_answer}"
+            f"{func_name["prompt"]}, {prompt_answer}"
         )
         encoded_raw_prompt = self.__int_encode(raw_prompt)
         i = 0
@@ -212,19 +212,21 @@ class Decoder(BaseModel):
             try:
                 p_key: str = param_keys[i]
                 set_state_type(p_key)
-                if self.state.type == Types.STRING:
-                    encoded_raw_prompt.extend(
-                        self.__int_encode('"')
-                    )
-                    prompt_answer += '"'
+                # if self.state.type == Types.STRING:
+                #     encoded_raw_prompt.extend(
+                #         self.__int_encode('"')
+                #     )
+                #     prompt_answer += '"'
                 logits: list[float] = self.__get_logits(encoded_raw_prompt)
                 best_token: int = self.__get_best_token(prompt, logits)
                 decoded_best_token: str = self.__decode([best_token])
                 print(decoded_best_token, end="", flush=True)
                 if ',' in decoded_best_token:
                     added_prompt: str = (
-                        f'{decoded_best_token} "{param_keys[i + 1]}": '
+                        f'{decoded_best_token} "{param_keys[i + 1]}":"'
                     )
+                    if self.state.type == Types.NUMBER:
+                        added_prompt = added_prompt[:-1]
                     prompt_answer += added_prompt
                     encoded_raw_prompt.extend(
                         self.__int_encode(added_prompt)
@@ -244,6 +246,7 @@ class Decoder(BaseModel):
         prompt_answer = prompt_answer.replace("}.}", "}")
         prompt_answer = prompt_answer.replace('""', '"')
         prompt_answer = prompt_answer.replace('" +"', '')
+        prompt_answer = prompt_answer.replace(',"}', '}')
         print(prompt_answer)
         return parameters
 
@@ -259,5 +262,5 @@ class Decoder(BaseModel):
             self.function_callings[0].prompt
         )
         self.__decode_parameters(
-            func_name["raw"], self.function_callings[0].prompt
+            func_name, self.function_callings[0].prompt
         )
