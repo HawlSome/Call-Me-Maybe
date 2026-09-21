@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/21 11:53:40 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/21 14:47:03 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -108,7 +108,7 @@ class Decoder(BaseModel):
 
             def get_encoded_str_mask() -> list[int]:
                 encoded_str_mask: list[int] = []
-                for ch in '/"':
+                for ch in '\"':
                     encoded_str_mask.extend(self.__int_encode(ch))
                 return encoded_str_mask
 
@@ -131,8 +131,10 @@ class Decoder(BaseModel):
         return int(argmax(masked_logits))
 
     def __decode_name(self, prompt: str) -> dict[str, str]:
+        self.state.state = States.NAME
+        self.state.type = Types.NULL
         name: dict[str, str] = {}
-        prompt_answer: str = '{"name": "'
+        prompt_answer: str = '{"name":"'
         raw_answer: str = ""
         raw_prompt = (
             "You are a function selector. "
@@ -141,7 +143,7 @@ class Decoder(BaseModel):
             "You will chose the function that match the one "
             "described in a given prompt. "
             f"Function Definitions: {self.__get_func_defs()}. "
-            f"Prompt: {prompt}."
+            f"Prompt: {prompt}. "
             f"{prompt_answer}"
         )
         encoded_raw_prompt = self.__int_encode(raw_prompt)
@@ -162,7 +164,7 @@ class Decoder(BaseModel):
 
     def __decode_parameters(
             self, func_name: dict[str, str], prompt: str
-    ) -> dict[str, Any]:
+    ) -> str:
         def get_keys() -> list[str]:
             keys: list[str] = []
             param_structure: dict[str, Any] = (
@@ -192,10 +194,18 @@ class Decoder(BaseModel):
             else:
                 self.state.type = Types.STRING
 
-        parameters: dict[str, Any] = {}
+        def clean_answer(prompt_answer: str) -> str:
+            prompt_answer = prompt_answer.replace(",}", "}")
+            prompt_answer = prompt_answer.replace("}}", "}")
+            prompt_answer = prompt_answer.replace("}.}", "}")
+            prompt_answer = prompt_answer.replace('""', '"')
+            prompt_answer = prompt_answer.replace('" +"', '')
+            prompt_answer = prompt_answer.replace(',"}', '}')
+            prompt_answer = '"parameters": ' + prompt_answer
+            return prompt_answer
+
         param_keys: list[str] = get_keys()
         prompt_answer: str = "{" + f'"{param_keys[0]}":'
-        # raw_answer: dict[str, Any] = {}
         raw_prompt = (
             "You are a parameter retriever. "
             "You will retrieve the parameters value of a function "
@@ -204,7 +214,7 @@ class Decoder(BaseModel):
             'end each found value with a ". '
             f"Function structure: {self.__get_func_struct(func_name["raw"])}. "
             f"Prompt: {prompt}."
-            f"{func_name["prompt"]}, {prompt_answer}"
+            f'"{func_name["raw"]}", "params": {prompt_answer}'
         )
         encoded_raw_prompt = self.__int_encode(raw_prompt)
         i = 0
@@ -212,16 +222,20 @@ class Decoder(BaseModel):
             try:
                 p_key: str = param_keys[i]
                 set_state_type(p_key)
-                # if self.state.type == Types.STRING:
-                #     encoded_raw_prompt.extend(
-                #         self.__int_encode('"')
-                #     )
-                #     prompt_answer += '"'
                 logits: list[float] = self.__get_logits(encoded_raw_prompt)
                 best_token: int = self.__get_best_token(prompt, logits)
                 decoded_best_token: str = self.__decode([best_token])
                 print(decoded_best_token, end="", flush=True)
-                if ',' in decoded_best_token:
+                if (
+                    (
+                        ',' in decoded_best_token
+                        and self.state.type == Types.NUMBER
+                    ) or
+                    (
+                        '",' in decoded_best_token
+                        and self.state.type == Types.STRING
+                    )
+                ):
                     added_prompt: str = (
                         f'{decoded_best_token} "{param_keys[i + 1]}":"'
                     )
@@ -241,26 +255,19 @@ class Decoder(BaseModel):
                 break
             encoded_raw_prompt.append(best_token)
             prompt_answer += self.__decode([best_token])
-        prompt_answer = prompt_answer.replace(",}", "}")
-        prompt_answer = prompt_answer.replace("}}", "}")
-        prompt_answer = prompt_answer.replace("}.}", "}")
-        prompt_answer = prompt_answer.replace('""', '"')
-        prompt_answer = prompt_answer.replace('" +"', '')
-        prompt_answer = prompt_answer.replace(',"}', '}')
-        print(prompt_answer)
-        return parameters
+        prompt_answer = clean_answer(prompt_answer) + "}"
+        return prompt_answer
 
     def function_call(self) -> None:
         pass
 
     def show_funcs(self) -> None:
-        # print(self.__get_func_defs())
-        # print()
-        # print(self.__get_func_struct("fn_greet"))
-        # print(self.__get_func_parameters("fn_greet"))
-        func_name = self.__decode_name(
-            self.function_callings[0].prompt
-        )
-        self.__decode_parameters(
-            func_name, self.function_callings[0].prompt
-        )
+        for func_calling in self.function_callings:
+            prompt = func_calling.prompt
+            func_name = self.__decode_name(
+                prompt
+            )
+            func_params = self.__decode_parameters(
+                func_name, prompt
+            )
+            print(f"{func_name["prompt"]} {func_params}")
