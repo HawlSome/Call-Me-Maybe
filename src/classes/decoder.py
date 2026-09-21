@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/21 14:47:03 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/21 14:59:01 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -204,6 +204,7 @@ class Decoder(BaseModel):
             prompt_answer = '"parameters": ' + prompt_answer
             return prompt_answer
 
+        func_struct = self.__get_func_struct(func_name["raw"])
         param_keys: list[str] = get_keys()
         prompt_answer: str = "{" + f'"{param_keys[0]}":'
         raw_prompt = (
@@ -212,7 +213,7 @@ class Decoder(BaseModel):
             "in a given prompt. The function structure will also "
             "be given to you for you to take reference on. "
             'end each found value with a ". '
-            f"Function structure: {self.__get_func_struct(func_name["raw"])}. "
+            f"Function structure: {func_struct}. "
             f"Prompt: {prompt}."
             f'"{func_name["raw"]}", "params": {prompt_answer}'
         )
@@ -270,4 +271,4 @@ class Decoder(BaseModel):
             func_params = self.__decode_parameters(
                 func_name, prompt
             )
-            print(f"{func_name["prompt"]} {func_params}")
+            print(f"{func_name['prompt']} {func_params}")
