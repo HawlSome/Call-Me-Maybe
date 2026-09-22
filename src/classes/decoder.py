@@ -7,12 +7,11 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 21:41:25 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/22 19:05:44 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
-    from functools import lru_cache
     from .enums import States, Types
     from .models import (
         FunctionCalling, FunctionDefinition, DecoderState
@@ -31,7 +30,6 @@ class Decoder(BaseModel):
     state: DecoderState = Field(default=DecoderState())
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    @lru_cache(maxsize=None)
     def __decode_name(self, prompt: str) -> dict[str, str]:
         from ..functions import get_func_defs
 

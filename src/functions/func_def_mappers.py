@@ -7,18 +7,16 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 19:05:07 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 21:12:07 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/22 19:07:00 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-from functools import lru_cache
 from typing import Any, cast
 from ..classes import (
     FunctionParameters, FunctionDefinition
 )
 
 
-@lru_cache(maxsize=None)
 def get_func_def_names(
     function_definitions: tuple[FunctionDefinition, ...]
 ) -> list[str]:
@@ -29,7 +27,6 @@ def get_func_def_names(
     return names
 
 
-@lru_cache(maxsize=None)
 def get_func_defs(
     function_definitions: tuple[FunctionDefinition, ...]
 ) -> list[dict[str, Any]]:
@@ -41,7 +38,6 @@ def get_func_defs(
     return func_defs
 
 
-@lru_cache(maxsize=None)
 def get_func_struct(
     function_definitions: tuple[FunctionDefinition, ...], func_name: str
 ) -> dict[str, Any]:
@@ -73,7 +69,6 @@ def get_func_struct(
     return func_struct
 
 
-@lru_cache(maxsize=None)
 def get_func_parameters(
         function_definitions: tuple[FunctionDefinition, ...], func_name: str
 ) -> dict[str, Any]:
