@@ -1,71 +1,132 @@
 [
   {
-    "name": "fn_caca",
-    "description": "Add two numbers together and return their sum.",
+    "name": "fn_add_number",
+    "description": "Return the sum of two number either in int or float.",
     "parameters": {
-      "a": {
-        "type": "number"
-      },
-      "b": {
-        "type": "number"
-      }
+      "a": {"type": "number"},
+      "b": {"type": "number"},
+      "float": {"type": "bool"}
     },
-    "returns": {
-      "type": "number"
-    }
+    "returns": {"type": "string"}
   },
   {
-    "name": "fn_greet",
-    "description": "Generate a greeting message for a person by name.",
-    "parameters": {
-      "name": {
-        "type": "string"
-      }
-    },
-    "returns": {
-      "type": "string"
-    }
+    "name": "fn_get_current_time",
+    "description": "Return the current time as a formatted string.",
+    "parameters": null,
+    "returns": {"type": "string"}
   },
   {
-    "name": "fn_reverse_string",
-    "description": "Reverse a string and return the reversed result.",
-    "parameters": {
-      "s": {
-        "type": "string"
-      }
-    },
-    "returns": {
-      "type": "string"
-    }
+    "name": "fn_get_current_date",
+    "description": "Return the current date as a formatted string.",
+    "parameters": null,
+    "returns": {"type": "string"}
   },
   {
-    "name": "fn_get_square_root",
-    "description": "Calculate the square root of a number.",
-    "parameters": {
-      "a": {
-        "type": "number"
-      }
-    },
-    "returns": {
-      "type": "number"
-    }
+    "name": "fn_get_random_number",
+    "description": "Generate and return a random number.",
+    "parameters": null,
+    "returns": {"type": "number"}
   },
   {
-    "name": "fn_substitute_string_with_regex",
-    "description": "Replace all occurrences matching a regex pattern in a string.",
-    "parameters": {
-      "source string": {
-        "type": "string"
-      },
-      "regex": {
-        "type": "string"
-      },
-      "replacement": {
-        "type": "string"
-      }
-    },
-    "returns": {
-      "type": "string"
-    }
+    "name": "fn_get_random_string",
+    "description": "Generate and return a random string.",
+    "parameters": null,
+    "returns": {"type": "string"}
+  },
+  {
+    "name": "fn_get_pi",
+    "description": "Return the mathematical constant pi.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_get_euler_number",
+    "description": "Return the mathematical constant Euler's number.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_get_zero",
+    "description": "Return the numerical value zero.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_get_one",
+    "description": "Return the numerical value one.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_get_empty_string",
+    "description": "Return an empty string.",
+    "parameters": null,
+    "returns": {"type": "string"}
+  },
+  {
+    "name": "fn_get_application_name",
+    "description": "Return the name of the current application.",
+    "parameters": null,
+    "returns": {"type": "string"}
+  },
+  {
+    "name": "fn_get_version",
+    "description": "Return the current application version.",
+    "parameters": null,
+    "returns": {"type": "string"}
+  },
+  {
+    "name": "fn_get_hostname",
+    "description": "Return the hostname of the current machine.",
+    "parameters": null,
+    "returns": {"type": "string"}
+  },
+  {
+    "name": "fn_get_username",
+    "description": "Return the name of the current user.",
+    "parameters": null,
+    "returns": {"type": "string"}
+  },
+  {
+    "name": "fn_get_system_name",
+    "description": "Return the name of the current operating system.",
+    "parameters": null,
+    "returns": {"type": "string"}
+  },
+  {
+    "name": "fn_get_random_decimal",
+    "description": "Generate and return a random decimal number.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_get_timestamp",
+    "description": "Return the current timestamp as a numerical value.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_get_unix_timestamp",
+    "description": "Return the current Unix timestamp.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_get_max_integer",
+    "description": "Return the maximum supported integer value.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_get_min_integer",
+    "description": "Return the minimum supported integer value.",
+    "parameters": null,
+    "returns": {"type": "number"}
+  },
+  {
+    "name": "fn_generate_identifier",
+    "description": "Generate and return a unique identifier string.",
+    "parameters": null,
+    "returns": {"type": "string"}
   }
 ]

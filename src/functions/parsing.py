@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   parsing.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 19:49:29 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/22 14:47:57 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -67,16 +67,24 @@ def __srote_function_defs(raw_fd: Any) -> list[FunctionDefinition]:
     for fd in raw_fd:
         name: str = str(fd["name"])
         description: str = str(fd["description"])
-        parameters: list[FunctionParameters] = [
-            FunctionParameters(
-                key=k,
-                value=v
-            )
+        parameters: list[FunctionParameters] | None = []
+        fd_params: Any = fd["parameters"]
+        if not fd_params:
+            parameters = None
+        try:
             for k, v in zip(
-                fd['parameters'].keys(),
-                fd['parameters'].values()
-            )
-        ]
+                fd_params.keys(),
+                fd_params.values()
+            ):
+                if parameters is not None:
+                    parameters.append(
+                        FunctionParameters(
+                            key=k,
+                            value=v
+                        )
+                    )
+        except Exception:
+            pass
         returns: dict[str, str] = cast(
             dict[str, str], fd["returns"]
         )

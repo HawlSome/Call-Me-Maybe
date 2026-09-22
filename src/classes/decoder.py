@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/21 15:05:53 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/22 14:59:10 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -65,10 +65,13 @@ class Decoder(BaseModel):
     def __get_func_struct(self, func_name: str) -> dict[str, Any]:
         def get_parameters(
             func_parameters: list[FunctionParameters]
-        ) -> dict[str, Any]:
-            params: dict[str, Any] = {}
+        ) -> dict[str, Any] | str:
+            params: dict[str, Any] | str = {}
             for param in func_parameters:
-                params[param.key] = param.value
+                if param.key and not isinstance(params, str):
+                    params[param.key] = param.value
+                else:
+                    params = "null"
             return params
 
         func_struct: dict[str, Any] = {}
@@ -76,7 +79,10 @@ class Decoder(BaseModel):
             if func.name == func_name:
                 name = func_name
                 description = func.description
-                parameters = get_parameters(func.parameters)
+                if func.parameters:
+                    parameters = get_parameters(func.parameters)
+                else:
+                    parameters = None
                 returns = func.returns
                 func_struct["name"] = name
                 func_struct["description"] = description
@@ -112,19 +118,33 @@ class Decoder(BaseModel):
                     encoded_str_mask.extend(self.__int_encode(ch))
                 return encoded_str_mask
 
+            def get_encoded_boolen_mask() -> list[list[int]]:
+                encoded_bool_mask: list[list[int]] = []
+                for boolean in ["true", "false", '"', "}", ","]:
+                    encoded_bool_mask.append(self.__int_encode(boolean))
+                return encoded_bool_mask
+
             masked_logits = [float("-inf") for _ in logits]
             if self.state.state == States.NAME:
                 for enc_names in get_encoded_func_def_names():
                     for token in enc_names:
                         masked_logits[token] = logits[token]
             if self.state.state == States.PARAMS:
-                if self.state.type == Types.NUMBER:
+                if (
+                    self.state.type == Types.NUMBER or
+                    self.state.type == Types.INT or
+                    self.state.type == Types.FLOAT
+                ):
                     for token in get_encoded_numeric_mask():
                         masked_logits[token] = logits[token]
                 if self.state.type == Types.STRING:
                     for token in get_encoded_str_mask():
                         logits[token] = float("-inf")
                         masked_logits = logits
+                if self.state.type == Types.BOOLEAN:
+                    for bool_values in get_encoded_boolen_mask():
+                        for token in bool_values:
+                            masked_logits[token] = logits[token]
             return masked_logits
 
         masked_logits = mask_logits(logits)
@@ -134,7 +154,7 @@ class Decoder(BaseModel):
         self.state.state = States.NAME
         self.state.type = Types.NULL
         name: dict[str, str] = {}
-        prompt_answer: str = '{"name":"'
+        prompt_answer: str = '"name":"'
         raw_answer: str = ""
         raw_prompt = (
             "You are a function selector. "
@@ -143,7 +163,7 @@ class Decoder(BaseModel):
             "You will chose the function that match the one "
             "described in a given prompt. "
             f"Function Definitions: {self.__get_func_defs()}. "
-            f"Prompt: {prompt}. "
+            f'Prompt: {prompt}. '
             f"{prompt_answer}"
         )
         encoded_raw_prompt = self.__int_encode(raw_prompt)
@@ -160,18 +180,22 @@ class Decoder(BaseModel):
         name["prompt"] = prompt_answer
         name["raw"] = raw_answer
         self.state.state = States.PARAMS
+        print()
         return name
 
     def __decode_parameters(
             self, func_name: dict[str, str], prompt: str
     ) -> str:
         def get_keys() -> list[str]:
-            keys: list[str] = []
-            param_structure: dict[str, Any] = (
-                self.__get_func_parameters(func_name["raw"])
-            )
-            keys.extend(list(param_structure.keys()))
-            return keys
+            try:
+                keys: list[str] = []
+                param_structure: dict[str, Any] = (
+                    self.__get_func_parameters(func_name["raw"])
+                )
+                keys.extend(list(param_structure.keys()))
+                return keys
+            except Exception:
+                return ["null"]
 
         def get_type(key: str) -> str:
             k_type: str = ""
@@ -182,17 +206,23 @@ class Decoder(BaseModel):
             return k_type
 
         def set_state_type(key: str) -> None:
-            k_type: str = get_type(key).lower()
-            if k_type in "string":
-                self.state.type = Types.STRING
-            elif (
-                k_type in "number" or
-                k_type in "float" or
-                k_type in "integer"
-            ):
-                self.state.type = Types.NUMBER
-            else:
-                self.state.type = Types.STRING
+            try:
+                k_type: str = get_type(key).lower()
+                if k_type in "string":
+                    self.state.type = Types.STRING
+                elif (
+                    k_type in "number" or
+                    k_type in "float"
+                ):
+                    self.state.type = Types.NUMBER
+                elif k_type in "integer":
+                    self.state.type = Types.INT
+                elif k_type in "boolean":
+                    self.state.type = Types.BOOLEAN
+                elif k_type in "null":
+                    self.state.type = Types.NULL
+            except Exception:
+                self.state.type = Types.NULL
 
         def clean_answer(prompt_answer: str) -> str:
             prompt_answer = prompt_answer.replace(",}", "}")
@@ -222,6 +252,8 @@ class Decoder(BaseModel):
             try:
                 p_key: str = param_keys[i]
                 set_state_type(p_key)
+                if self.state.type == Types.NULL:
+                    return '"parameters": null'
                 logits: list[float] = self.__get_logits(encoded_raw_prompt)
                 best_token: int = self.__get_best_token(prompt, logits)
                 decoded_best_token: str = self.__decode([best_token])
@@ -229,17 +261,26 @@ class Decoder(BaseModel):
                 if (
                     (
                         ',' in decoded_best_token
-                        and self.state.type == Types.NUMBER
+                        and (
+                            self.state.type == Types.NUMBER
+                            or self.state.type == Types.INT
+                        )
                     ) or
                     (
                         '",' in decoded_best_token
-                        and self.state.type == Types.STRING
+                        and (
+                            self.state.type == Types.STRING
+                            or self.state.type == Types.BOOLEAN
+                        )
                     )
                 ):
                     added_prompt: str = (
                         f'{decoded_best_token} "{param_keys[i + 1]}":"'
                     )
-                    if self.state.type == Types.NUMBER:
+                    if (
+                        self.state.type == Types.NUMBER or
+                        self.state.type == Types.INT
+                    ):
                         added_prompt = added_prompt[:-1]
                     prompt_answer += added_prompt
                     encoded_raw_prompt.extend(
@@ -251,11 +292,12 @@ class Decoder(BaseModel):
                     i += len(p_key)
                     continue
             except IndexError:
-                prompt_answer += f'{decoded_best_token}' + "}"
+                prompt_answer += f'{decoded_best_token}'
                 break
             encoded_raw_prompt.append(best_token)
             prompt_answer += self.__decode([best_token])
-        prompt_answer = clean_answer(prompt_answer) + "}"
+        print(prompt_answer)
+        prompt_answer = clean_answer(prompt_answer)
         return prompt_answer
 
     def function_call(self) -> None:

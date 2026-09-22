@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   enums.py                                             :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:51:21 by varandri            #+#    #+#            #
-#   Updated: 2026/09/19 21:04:40 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/22 12:38:44 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -22,4 +22,7 @@ class States(Enum):
 class Types(Enum):
     STRING = "string"
     NUMBER = "number"
+    INT = "integer"
+    FLOAT = "float"
+    BOOLEAN = "boolean"
     NULL = ""
