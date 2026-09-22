@@ -7,23 +7,17 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 22:43:19 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/22 22:48:22 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
     from .enums import States, Types
-    from importlib import import_module
     from .models import (
         FunctionCalling, FunctionDefinition, DecoderState
     )
     from pydantic import BaseModel, Field, ConfigDict
     from .llm import Llm
-
-    pydantic = import_module("pydantic")
-    BaseModel, Field, ConfigDict = (
-        pydantic.BaseModel, pydantic.Field, pydantic.ConfigDict
-    )
 except ModuleNotFoundError:
     raise ModuleNotFoundError
 
