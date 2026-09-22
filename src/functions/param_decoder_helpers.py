@@ -7,11 +7,12 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 21:28:56 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/22 22:27:14 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 from ..classes import FunctionDefinition, Decoder
+from ..classes.models import DecoderState
 from typing import Any
 from ..classes.enums import Types
 from .func_def_mappers import (
@@ -76,3 +77,11 @@ def clean_answer(prompt_answer: str) -> str:
     prompt_answer = prompt_answer.replace(',"}', '}')
     prompt_answer = '"parameters": ' + prompt_answer
     return prompt_answer
+
+
+def smart_cast(state: DecoderState, value: str) -> str:
+    if state.type == Types.INT:
+        value = str(int(value))
+    if state.type in [Types.NUMBER, Types.FLOAT]:
+        value = str(float(value))
+    return value
