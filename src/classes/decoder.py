@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 14:59:10 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/22 15:23:47 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -163,10 +163,12 @@ class Decoder(BaseModel):
             "You will chose the function that match the one "
             "described in a given prompt. "
             f"Function Definitions: {self.__get_func_defs()}. "
-            f'Prompt: {prompt}. '
+            "{"
+            f'"prompt": "{prompt}", '
             f"{prompt_answer}"
         )
         encoded_raw_prompt = self.__int_encode(raw_prompt)
+        # print(raw_prompt)
         while True:
             logits: list[float] = self.__get_logits(encoded_raw_prompt)
             best_token: int = self.__get_best_token("", logits)
@@ -243,8 +245,9 @@ class Decoder(BaseModel):
             "be given to you for you to take reference on. "
             'end each found value with a ". '
             f"Function structure: {self.__get_func_struct(func_name['raw'])}. "
-            f"Prompt: {prompt}."
-            f'"{func_name["raw"]}", "params": {prompt_answer}'
+            "{"
+            f'"prompt": "{prompt}", '
+            f'"{func_name["raw"]}", "parameters":{prompt_answer}'
         )
         encoded_raw_prompt = self.__int_encode(raw_prompt)
         i = 0
@@ -257,7 +260,7 @@ class Decoder(BaseModel):
                 logits: list[float] = self.__get_logits(encoded_raw_prompt)
                 best_token: int = self.__get_best_token(prompt, logits)
                 decoded_best_token: str = self.__decode([best_token])
-                print(decoded_best_token, end="", flush=True)
+                # print(decoded_best_token, end="", flush=True)
                 if (
                     (
                         ',' in decoded_best_token
@@ -292,11 +295,10 @@ class Decoder(BaseModel):
                     i += len(p_key)
                     continue
             except IndexError:
-                prompt_answer += f'{decoded_best_token}'
+                prompt_answer += f'{decoded_best_token}'+ "}"
                 break
             encoded_raw_prompt.append(best_token)
             prompt_answer += self.__decode([best_token])
-        print(prompt_answer)
         prompt_answer = clean_answer(prompt_answer)
         return prompt_answer
 
