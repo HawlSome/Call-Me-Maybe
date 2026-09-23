@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   decoder.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 08:48:09 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 11:59:46 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -37,7 +37,7 @@ class Decoder(BaseModel):
         self.state.state = States.NAME
         self.state.type = Types.NULL
         func_defs: list[dict[str, Any]] = get_func_defs(
-            tuple(self.function_definitions)
+            self.function_definitions
         )
         name: dict[str, str] = {}
         prompt_answer: str = '"name":"'
@@ -78,11 +78,11 @@ class Decoder(BaseModel):
         )
 
         func_struct: dict[str, Any] = get_func_struct(
-            tuple(self.function_definitions),
+            self.function_definitions,
             func_name['raw']
         )
         param_keys: list[str] = get_keys(
-            tuple(self.function_definitions), func_name["raw"]
+            self.function_definitions, func_name["raw"]
         )
         prompt_answer: str = "{" + f'"{param_keys[0]}":'
         raw_prompt = (

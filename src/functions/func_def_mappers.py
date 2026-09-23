@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   func_def_mappers.py                                  :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 19:05:07 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 19:07:00 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 11:58:51 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -18,7 +18,7 @@ from ..classes import (
 
 
 def get_func_def_names(
-    function_definitions: tuple[FunctionDefinition, ...]
+    function_definitions: list[FunctionDefinition]
 ) -> list[str]:
     names: list[str] = []
     for fd_name in function_definitions:
@@ -28,7 +28,7 @@ def get_func_def_names(
 
 
 def get_func_defs(
-    function_definitions: tuple[FunctionDefinition, ...]
+    function_definitions: list[FunctionDefinition]
 ) -> list[dict[str, Any]]:
     func_defs: list[dict[str, Any]] = []
     for fnd in function_definitions:
@@ -39,7 +39,7 @@ def get_func_defs(
 
 
 def get_func_struct(
-    function_definitions: tuple[FunctionDefinition, ...], func_name: str
+    function_definitions: list[FunctionDefinition], func_name: str
 ) -> dict[str, Any]:
     def get_parameters(
         func_parameters: list[FunctionParameters]
@@ -70,7 +70,7 @@ def get_func_struct(
 
 
 def get_func_parameters(
-        function_definitions: tuple[FunctionDefinition, ...], func_name: str
+        function_definitions: list[FunctionDefinition], func_name: str
 ) -> dict[str, Any]:
     param = cast(
         dict[str, Any], get_func_struct(

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   llm.py                                               :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 20:56:47 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 19:16:41 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 12:01:13 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -39,7 +39,7 @@ class Llm(BaseModel):
     def decode(self, tokens: list[int]) -> str:
         return str(self.model.decode(tokens))
 
-    def __get_logits(self, tokens: tuple[int, ...]) -> list[float]:
+    def __get_logits(self, tokens: list[int]) -> list[float]:
         return cast(
             list[float],
             self.model.get_logits_from_input_ids(list(tokens))
@@ -54,7 +54,7 @@ class Llm(BaseModel):
             def get_encoded_func_def_names() -> list[list[int]]:
                 encoded_names: list[list[int]] = []
                 for name in get_func_def_names(
-                    tuple(decoder.function_definitions)
+                    decoder.function_definitions
                 ):
                     encoded_names.append(
                         self.int_encode(name)
@@ -102,6 +102,6 @@ class Llm(BaseModel):
                             masked_logits[token] = logits[token]
             return masked_logits
 
-        logits = self.__get_logits(tuple(encoded_prompt))
+        logits = self.__get_logits(encoded_prompt)
         masked_logits = mask_logits(logits)
         return int(argmax(masked_logits))

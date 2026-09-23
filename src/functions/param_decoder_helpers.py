@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   param_decoder_helpers.py                             :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 08:43:02 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 12:01:48 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -21,12 +21,12 @@ from .func_def_mappers import (
 
 
 def get_keys(
-    function_definitions: tuple[FunctionDefinition, ...], func_name: str
+    function_definitions: list[FunctionDefinition], func_name: str
 ) -> list[str]:
     try:
         keys: list[str] = []
         param_structure: dict[str, Any] = (
-            get_func_parameters(tuple(function_definitions), func_name)
+            get_func_parameters(function_definitions, func_name)
         )
         keys.extend(list(param_structure.keys()))
         return keys
@@ -36,11 +36,11 @@ def get_keys(
 
 def __get_type(
     key: str,
-    function_definitions: tuple[FunctionDefinition, ...], func_name: str
+    function_definitions: list[FunctionDefinition], func_name: str
 ) -> str:
     k_type: str = ""
     param_structure: dict[str, Any] = (
-        get_func_parameters(tuple(function_definitions), func_name)
+        get_func_parameters(function_definitions, func_name)
     )
     k_type = param_structure[key]["type"]
     return k_type
@@ -49,7 +49,7 @@ def __get_type(
 def set_state_type(key: str, decoder: Decoder, func_name: str) -> None:
     try:
         k_type: str = __get_type(
-            key, tuple(decoder.function_definitions), func_name
+            key, decoder.function_definitions, func_name
         ).lower()
         if k_type in "string":
             decoder.state.type = Types.STRING
