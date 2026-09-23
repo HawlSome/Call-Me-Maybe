@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 13:58:30 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 14:52:12 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -40,7 +40,7 @@ class Decoder(BaseModel):
             self.function_definitions
         )
         name: dict[str, str] = {}
-        prompt_answer: str = '"function_name":"'
+        prompt_answer: str = '"name": "'
         raw_answer: str = ""
         raw_prompt = (
             "You are a function selector. "
@@ -48,8 +48,9 @@ class Decoder(BaseModel):
             "a list of given function definitions. "
             "You will chose the function that match the one "
             "described in a given prompt. "
-            f"Function Definitions: {func_defs}. "
-            "{"f'"prompt": "{prompt}", '
+            'the format is as ..."name": "fn_function_name"'
+            f"Function Definitions: {func_defs}. Output:"
+            '{'f'"prompt":"{prompt}", '
             f"{prompt_answer}"
         )
         encoded_raw_prompt = self.llm.int_encode(raw_prompt)
@@ -140,7 +141,7 @@ class Decoder(BaseModel):
                     if self.state.type in [Types.INT, Types.NUMBER]:
                         max_token = 9
                     continue
-                if '}' in decoded_best_token:
+                if '"}' in decoded_best_token:
                     i += len(param_keys) + 142
                     continue
             except IndexError:
