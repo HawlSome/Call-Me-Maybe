@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 14:52:12 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 15:23:58 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -113,18 +113,12 @@ class Decoder(BaseModel):
                 decoded_best_token: str = self.llm.decode([best_token])
                 max_token -= 1
                 print(decoded_best_token, end="", flush=True)
-                if (
-                    is_ending_token(self.state, decoded_best_token)
-                    or max_token <= 0
-                ):
+                if is_ending_token(self.state, decoded_best_token, max_token):
+                    decoded_best_token = '",'
                     if max_token <= 0 and self.state.type in [
                         Types.INT or Types.NUMBER
                     ]:
                         decoded_best_token = ","
-                    if max_token <= 0 and self.state.type in [
-                        Types.STRING or Types.BOOLEAN
-                    ]:
-                        decoded_best_token = '",'
                     added_prompt: str = (
                         f'{decoded_best_token} "{param_keys[i + 1]}":"'
                     )

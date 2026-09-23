@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 12:01:48 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 15:22:56 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -68,7 +68,9 @@ def set_state_type(key: str, decoder: Decoder, func_name: str) -> None:
         decoder.state.type = Types.NULL
 
 
-def is_ending_token(state: DecoderState, decoded_best_token: str) -> bool:
+def is_ending_token(
+    state: DecoderState, decoded_best_token: str, max_token: int
+) -> bool:
     return (
         (
             ',' in decoded_best_token
@@ -77,7 +79,8 @@ def is_ending_token(state: DecoderState, decoded_best_token: str) -> bool:
         (
             '",' in decoded_best_token
             and state.type in [Types.STRING, Types.BOOLEAN]
-        )
+        ) or
+        max_token <= 0
     )
 
 
