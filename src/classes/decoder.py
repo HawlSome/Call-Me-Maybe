@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   decoder.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 22:48:22 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 11:23:07 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
+    from typing import Any
     from .enums import States, Types
     from .models import (
         FunctionCalling, FunctionDefinition, DecoderState
@@ -35,6 +36,9 @@ class Decoder(BaseModel):
 
         self.state.state = States.NAME
         self.state.type = Types.NULL
+        func_defs: list[dict[str, Any]] = get_func_defs(
+            tuple(self.function_definitions)
+        )
         name: dict[str, str] = {}
         prompt_answer: str = '"name":"'
         raw_answer: str = ""
@@ -44,9 +48,7 @@ class Decoder(BaseModel):
             "a list of given function definitions. "
             "You will chose the function that match the one "
             "described in a given prompt. "
-            f"Function Definitions: {get_func_defs(
-                tuple(self.function_definitions)
-            )}. "
+            f"Function Definitions: {func_defs}. "
             "{"
             f'"prompt": "{prompt}", '
             f"{prompt_answer}"
@@ -54,12 +56,12 @@ class Decoder(BaseModel):
         encoded_raw_prompt = self.llm.int_encode(raw_prompt)
         while True:
             best_token: int = self.llm.get_best_token(self, encoded_raw_prompt)
-            if '"' in self.llm.decode(tuple([best_token])):
+            if '"' in self.llm.decode([best_token]):
                 prompt_answer += '", '
                 break
-            print(self.llm.decode(tuple([best_token])), end="", flush=True)
-            prompt_answer += self.llm.decode(tuple([best_token]))
-            raw_answer += self.llm.decode(tuple([best_token]))
+            print(self.llm.decode([best_token]), end="", flush=True)
+            prompt_answer += self.llm.decode([best_token])
+            raw_answer += self.llm.decode([best_token])
             encoded_raw_prompt.append(best_token)
         name["prompt"] = prompt_answer
         name["raw"] = raw_answer
@@ -71,9 +73,14 @@ class Decoder(BaseModel):
             self, func_name: dict[str, str], prompt: str
     ) -> str:
         from ..functions import (
-            get_func_struct, get_keys, set_state_type, clean_answer
+            get_func_struct, get_keys, set_state_type, clean_answer,
+            is_ending_token
         )
 
+        func_struct: dict[str, Any] = get_func_struct(
+            tuple(self.function_definitions),
+            func_name['raw']
+        )
         param_keys: list[str] = get_keys(
             tuple(self.function_definitions), func_name["raw"]
         )
@@ -84,10 +91,7 @@ class Decoder(BaseModel):
             "in a given prompt. The function structure will also "
             "be given to you for you to take reference on. "
             'end each found value with a ". '
-            f"Function structure: {get_func_struct(
-                tuple(self.function_definitions),
-                func_name['raw']
-            )}. "
+            f"Function structure: {func_struct}. "
             "{"
             f'"prompt": "{prompt}", '
             f'"{func_name["raw"]}", "parameters":{prompt_answer}'
@@ -103,30 +107,12 @@ class Decoder(BaseModel):
                 best_token: int = self.llm.get_best_token(
                     self, encoded_raw_prompt
                 )
-                decoded_best_token: str = self.llm.decode(tuple([best_token]))
-                if (
-                    (
-                        ',' in decoded_best_token
-                        and (
-                            self.state.type == Types.NUMBER
-                            or self.state.type == Types.INT
-                        )
-                    ) or
-                    (
-                        '",' in decoded_best_token
-                        and (
-                            self.state.type == Types.STRING
-                            or self.state.type == Types.BOOLEAN
-                        )
-                    )
-                ):
+                decoded_best_token: str = self.llm.decode([best_token])
+                if (is_ending_token(self.state, decoded_best_token)):
                     added_prompt: str = (
                         f'{decoded_best_token} "{param_keys[i + 1]}":"'
                     )
-                    if (
-                        self.state.type == Types.NUMBER or
-                        self.state.type == Types.INT
-                    ):
+                    if self.state.type in [Types.NUMBER, Types.INT]:
                         added_prompt = added_prompt[:-1]
                     prompt_answer += added_prompt
                     encoded_raw_prompt.extend(
@@ -135,13 +121,13 @@ class Decoder(BaseModel):
                     i += 1
                     continue
                 if "}" in decoded_best_token:
-                    i += len(p_key)
+                    i += len(param_keys)
                     continue
             except IndexError:
                 prompt_answer += f'{decoded_best_token}' + "}"
                 break
             encoded_raw_prompt.append(best_token)
-            prompt_answer += self.llm.decode(tuple([best_token]))
+            prompt_answer += self.llm.decode([best_token])
         prompt_answer = clean_answer(prompt_answer)
         return prompt_answer
 
