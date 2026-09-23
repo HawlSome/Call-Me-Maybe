@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   param_decoder_helpers.py                             :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 11:21:12 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 08:43:02 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -84,6 +84,7 @@ def is_ending_token(state: DecoderState, decoded_best_token: str) -> bool:
 def clean_answer(prompt_answer: str) -> str:
     prompt_answer = prompt_answer.replace(",}", "}")
     prompt_answer = prompt_answer.replace("}}", "}")
+    prompt_answer = prompt_answer.replace("}\n}", "}")
     prompt_answer = prompt_answer.replace("}.}", "}")
     prompt_answer = prompt_answer.replace('""', '"')
     prompt_answer = prompt_answer.replace('" +"', '')

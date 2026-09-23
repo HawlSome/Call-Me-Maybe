@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   decoder.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 11:23:07 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 08:48:09 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -108,6 +108,9 @@ class Decoder(BaseModel):
                     self, encoded_raw_prompt
                 )
                 decoded_best_token: str = self.llm.decode([best_token])
+                if '"}' in decoded_best_token:
+                    i += len(param_keys)
+                    continue
                 if (is_ending_token(self.state, decoded_best_token)):
                     added_prompt: str = (
                         f'{decoded_best_token} "{param_keys[i + 1]}":"'
@@ -120,11 +123,8 @@ class Decoder(BaseModel):
                     )
                     i += 1
                     continue
-                if "}" in decoded_best_token:
-                    i += len(param_keys)
-                    continue
             except IndexError:
-                prompt_answer += f'{decoded_best_token}' + "}"
+                prompt_answer += f'{decoded_best_token}' + '}'
                 break
             encoded_raw_prompt.append(best_token)
             prompt_answer += self.llm.decode([best_token])
