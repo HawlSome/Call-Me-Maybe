@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 11:59:46 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/23 13:58:30 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -40,7 +40,7 @@ class Decoder(BaseModel):
             self.function_definitions
         )
         name: dict[str, str] = {}
-        prompt_answer: str = '"name":"'
+        prompt_answer: str = '"function_name":"'
         raw_answer: str = ""
         raw_prompt = (
             "You are a function selector. "
@@ -49,8 +49,7 @@ class Decoder(BaseModel):
             "You will chose the function that match the one "
             "described in a given prompt. "
             f"Function Definitions: {func_defs}. "
-            "{"
-            f'"prompt": "{prompt}", '
+            "{"f'"prompt": "{prompt}", '
             f"{prompt_answer}"
         )
         encoded_raw_prompt = self.llm.int_encode(raw_prompt)
@@ -77,12 +76,13 @@ class Decoder(BaseModel):
             is_ending_token
         )
 
+        param_keys: list[str] = get_keys(
+            self.function_definitions, func_name["raw"]
+        )
+        set_state_type(param_keys[0], self, func_name["raw"])
         func_struct: dict[str, Any] = get_func_struct(
             self.function_definitions,
             func_name['raw']
-        )
-        param_keys: list[str] = get_keys(
-            self.function_definitions, func_name["raw"]
         )
         prompt_answer: str = "{" + f'"{param_keys[0]}":'
         raw_prompt = (
@@ -97,21 +97,33 @@ class Decoder(BaseModel):
             f'"{func_name["raw"]}", "parameters":{prompt_answer}'
         )
         encoded_raw_prompt = self.llm.int_encode(raw_prompt)
+        max_token: int = 150
+        if self.state.type in [Types.INT, Types.NUMBER]:
+            max_token = 9
         i = 0
         while True:
             try:
                 p_key: str = param_keys[i]
-                set_state_type(p_key, self, func_name["raw"])
                 if self.state.type == Types.NULL:
                     return '"parameters": null'
                 best_token: int = self.llm.get_best_token(
                     self, encoded_raw_prompt
                 )
                 decoded_best_token: str = self.llm.decode([best_token])
-                if '"}' in decoded_best_token:
-                    i += len(param_keys)
-                    continue
-                if (is_ending_token(self.state, decoded_best_token)):
+                max_token -= 1
+                print(decoded_best_token, end="", flush=True)
+                if (
+                    is_ending_token(self.state, decoded_best_token)
+                    or max_token <= 0
+                ):
+                    if max_token <= 0 and self.state.type in [
+                        Types.INT or Types.NUMBER
+                    ]:
+                        decoded_best_token = ","
+                    if max_token <= 0 and self.state.type in [
+                        Types.STRING or Types.BOOLEAN
+                    ]:
+                        decoded_best_token = '",'
                     added_prompt: str = (
                         f'{decoded_best_token} "{param_keys[i + 1]}":"'
                     )
@@ -122,6 +134,14 @@ class Decoder(BaseModel):
                         self.llm.int_encode(added_prompt)
                     )
                     i += 1
+                    p_key = param_keys[i]
+                    set_state_type(p_key, self, func_name["raw"])
+                    max_token = 150
+                    if self.state.type in [Types.INT, Types.NUMBER]:
+                        max_token = 9
+                    continue
+                if '}' in decoded_best_token:
+                    i += len(param_keys) + 142
                     continue
             except IndexError:
                 prompt_answer += f'{decoded_best_token}' + '}'
