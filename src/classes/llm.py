@@ -7,18 +7,21 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 20:56:47 by varandri            #+#    #+#            #
-#   Updated: 2026/09/24 13:48:21 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/24 15:36:46 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
     from typing import cast, TYPE_CHECKING
     from .enums import States, Types
-    from llm_sdk import Small_LLM_Model  # type: ignore
+    from llm_sdk import Small_LLM_Model
     from pydantic import BaseModel, Field, ConfigDict
     from numpy import argmax
 except ModuleNotFoundError:
     raise ModuleNotFoundError
+except KeyboardInterrupt:
+    print("Error manafo o")
+    exit()
 
 if TYPE_CHECKING:
     from .decoder import Decoder
