@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 15:23:58 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/24 15:05:01 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -74,7 +74,7 @@ class Decoder(BaseModel):
     ) -> str:
         from ..functions import (
             get_func_struct, get_keys, set_state_type, clean_answer,
-            is_ending_token
+            is_ending_token, get_next_parameter
         )
 
         param_keys: list[str] = get_keys(
@@ -85,7 +85,7 @@ class Decoder(BaseModel):
             self.function_definitions,
             func_name['raw']
         )
-        prompt_answer: str = "{" + f'"{param_keys[0]}":'
+        prompt_answer: list[str] = ["{" + f'"{param_keys[0]}":']
         raw_prompt = (
             "You are a parameter retriever. "
             "You will retrieve the parameters value of a function "
@@ -95,56 +95,50 @@ class Decoder(BaseModel):
             f"Function structure: {func_struct}. "
             "{"
             f'"prompt": "{prompt}", '
-            f'"{func_name["raw"]}", "parameters":{prompt_answer}'
+            f'"{func_name["raw"]}", "parameters":{prompt_answer[0]}'
         )
         encoded_raw_prompt = self.llm.int_encode(raw_prompt)
-        max_token: int = 150
+        max_token = [150]
         if self.state.type in [Types.INT, Types.NUMBER]:
-            max_token = 9
-        i = 0
+            max_token[0] = 9
+        i = [0]
         while True:
             try:
-                p_key: str = param_keys[i]
                 if self.state.type == Types.NULL:
                     return '"parameters": null'
                 best_token: int = self.llm.get_best_token(
                     self, encoded_raw_prompt
                 )
                 decoded_best_token: str = self.llm.decode([best_token])
-                max_token -= 1
+                max_token[0] -= 1
                 print(decoded_best_token, end="", flush=True)
-                if is_ending_token(self.state, decoded_best_token, max_token):
-                    decoded_best_token = '",'
-                    if max_token <= 0 and self.state.type in [
-                        Types.INT or Types.NUMBER
-                    ]:
-                        decoded_best_token = ","
-                    added_prompt: str = (
-                        f'{decoded_best_token} "{param_keys[i + 1]}":"'
+                if is_ending_token(
+                    self.state, decoded_best_token,
+                    max_token[0]
+                ):
+                    get_next_parameter(
+                        decoder=self, func_name=func_name["raw"],
+                        param_keys=param_keys, max_token=max_token,
+                        i=i, decoded_best_token=decoded_best_token,
+                        encoded_raw_prompt=encoded_raw_prompt,
+                        prompt_answer=prompt_answer
                     )
-                    if self.state.type in [Types.NUMBER, Types.INT]:
-                        added_prompt = added_prompt[:-1]
-                    prompt_answer += added_prompt
-                    encoded_raw_prompt.extend(
-                        self.llm.int_encode(added_prompt)
-                    )
-                    i += 1
-                    p_key = param_keys[i]
-                    set_state_type(p_key, self, func_name["raw"])
-                    max_token = 150
-                    if self.state.type in [Types.INT, Types.NUMBER]:
-                        max_token = 9
                     continue
-                if '"}' in decoded_best_token:
-                    i += len(param_keys) + 142
-                    continue
+                if (
+                    '"}' in decoded_best_token and
+                    self.state.type == Types.STRING
+                    or
+                    '}' in decoded_best_token and
+                    self.state.type == Types.BOOLEAN
+                ):
+                    raise IndexError
             except IndexError:
-                prompt_answer += f'{decoded_best_token}' + '}'
+                prompt_answer[0] += f'{decoded_best_token}' + '}'
                 break
             encoded_raw_prompt.append(best_token)
-            prompt_answer += self.llm.decode([best_token])
-        prompt_answer = clean_answer(prompt_answer)
-        return prompt_answer
+            prompt_answer[0] += self.llm.decode([best_token])
+        prompt_answer[0] = clean_answer(prompt_answer[0])
+        return prompt_answer[0]
 
     def function_call(self) -> None:
         pass
