@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/24 15:01:47 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/25 11:01:18 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -84,6 +84,22 @@ def is_ending_token(
     )
 
 
+def clean_decoded(
+    decoded_best_token: str, raw_param: list[str],
+    state: DecoderState
+) -> str:
+    if raw_param[0].startswith(' '):
+        decoded_best_token = decoded_best_token.lstrip()
+    decoded_best_token = decoded_best_token.replace('",', '')
+    decoded_best_token = decoded_best_token.replace('",', '')
+    if state.type in [Types.INT, Types.BOOLEAN, Types.NUMBER]:
+        decoded_best_token = decoded_best_token.replace(',', '')
+    decoded_best_token = decoded_best_token.replace('"', '')
+    decoded_best_token = decoded_best_token.replace('}', '')
+    decoded_best_token = decoded_best_token.replace('\n', '')
+    return decoded_best_token
+
+
 def clean_answer(prompt_answer: str) -> str:
     prompt_answer = prompt_answer.replace(",}", "}")
     prompt_answer = prompt_answer.replace("}}", "}")
@@ -94,6 +110,13 @@ def clean_answer(prompt_answer: str) -> str:
     prompt_answer = prompt_answer.replace(',"}', '}')
     prompt_answer = '"parameters": ' + prompt_answer
     return prompt_answer
+
+
+def clean_raw_param(raw_param: list[str]) -> None:
+    raw_param[0] = raw_param[0].replace(',', '')
+    raw_param[0] = raw_param[0].replace('"', '')
+    raw_param[0] = raw_param[0].replace('"}', '')
+    raw_param[0] = raw_param[0].replace('\n', '')
 
 
 def smart_cast(state: DecoderState, value: str) -> str:

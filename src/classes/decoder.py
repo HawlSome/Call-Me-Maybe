@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/24 15:05:01 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/25 11:06:45 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -74,9 +74,11 @@ class Decoder(BaseModel):
     ) -> str:
         from ..functions import (
             get_func_struct, get_keys, set_state_type, clean_answer,
-            is_ending_token, get_next_parameter
+            is_ending_token, get_next_parameter, clean_raw_param,
+            clean_decoded, smart_cast
         )
 
+        raw_param: list[str] = [""]
         param_keys: list[str] = get_keys(
             self.function_definitions, func_name["raw"]
         )
@@ -111,7 +113,13 @@ class Decoder(BaseModel):
                 )
                 decoded_best_token: str = self.llm.decode([best_token])
                 max_token[0] -= 1
-                print(decoded_best_token, end="", flush=True)
+                raw_param[0] += decoded_best_token
+                clean_raw_param(raw_param)
+                print(
+                    clean_decoded(decoded_best_token, raw_param, self.state),
+                    end="", flush=True
+                )
+                raw_param[0] = raw_param[0].lstrip()
                 if is_ending_token(
                     self.state, decoded_best_token,
                     max_token[0]
@@ -123,6 +131,13 @@ class Decoder(BaseModel):
                         encoded_raw_prompt=encoded_raw_prompt,
                         prompt_answer=prompt_answer
                     )
+                    casted_param = smart_cast(self.state, raw_param[0])
+                    prompt_answer[0] = prompt_answer[0].replace(
+                        raw_param[0], casted_param
+                    )
+                    casted_param = casted_param.replace(raw_param[0], "")
+                    print(f"{casted_param}", end="", flush=True)
+                    raw_param[0] = ""
                     continue
                 if (
                     '"}' in decoded_best_token and
