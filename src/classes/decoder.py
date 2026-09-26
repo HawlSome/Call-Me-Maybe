@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   decoder.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/25 11:06:45 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/26 11:35:19 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -104,6 +104,8 @@ class Decoder(BaseModel):
         if self.state.type in [Types.INT, Types.NUMBER]:
             max_token[0] = 9
         i = [0]
+        decoded_best_token: str = ""
+        casted_param: list[str] = [""]
         while True:
             try:
                 if self.state.type == Types.NULL:
@@ -111,7 +113,7 @@ class Decoder(BaseModel):
                 best_token: int = self.llm.get_best_token(
                     self, encoded_raw_prompt
                 )
-                decoded_best_token: str = self.llm.decode([best_token])
+                decoded_best_token = self.llm.decode([best_token])
                 max_token[0] -= 1
                 raw_param[0] += decoded_best_token
                 clean_raw_param(raw_param)
@@ -129,14 +131,9 @@ class Decoder(BaseModel):
                         param_keys=param_keys, max_token=max_token,
                         i=i, decoded_best_token=decoded_best_token,
                         encoded_raw_prompt=encoded_raw_prompt,
-                        prompt_answer=prompt_answer
+                        prompt_answer=prompt_answer, raw_param=raw_param,
+                        casted_param=casted_param
                     )
-                    casted_param = smart_cast(self.state, raw_param[0])
-                    prompt_answer[0] = prompt_answer[0].replace(
-                        raw_param[0], casted_param
-                    )
-                    casted_param = casted_param.replace(raw_param[0], "")
-                    print(f"{casted_param}", end="", flush=True)
                     raw_param[0] = ""
                     continue
                 if (

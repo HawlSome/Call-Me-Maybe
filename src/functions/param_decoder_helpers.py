@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   param_decoder_helpers.py                             :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/25 11:01:18 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/26 11:35:23 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -131,7 +131,8 @@ def get_next_parameter(
     *,
     decoder: Decoder, func_name: str, param_keys: list[str],
     max_token: list[int], i: list[int], decoded_best_token: str,
-    encoded_raw_prompt: list[int], prompt_answer: list[str]
+    encoded_raw_prompt: list[int], prompt_answer: list[str],
+    raw_param: list[str], casted_param: list[str]
 ) -> None:
     if max_token[0] <= 0 and decoder.state.type in [
         Types.INT or Types.NUMBER
@@ -139,6 +140,12 @@ def get_next_parameter(
         decoded_best_token = ","
     if max_token[0] <= 0 and decoder.state.type == Types.STRING:
         decoded_best_token = '",'
+    casted_param[0] = smart_cast(decoder.state, raw_param[0])
+    prompt_answer[0] = prompt_answer[0].replace(
+        raw_param[0], casted_param[0]
+    )
+    casted_param[0] = casted_param[0].replace(raw_param[0], "")
+    print(f"{casted_param[0]}", end="", flush=True)
     i[0] += 1
     p_key = param_keys[i[0]]
     set_state_type(p_key, decoder, func_name)
