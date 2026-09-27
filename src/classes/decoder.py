@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/26 11:35:19 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/27 18:58:33 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -54,6 +54,7 @@ class Decoder(BaseModel):
             f"{prompt_answer}"
         )
         encoded_raw_prompt = self.llm.int_encode(raw_prompt)
+        print('"name": "', end="", flush=True)
         while True:
             best_token: int = self.llm.get_best_token(self, encoded_raw_prompt)
             if '"' in self.llm.decode([best_token]):
@@ -66,7 +67,7 @@ class Decoder(BaseModel):
         name["prompt"] = prompt_answer
         name["raw"] = raw_answer
         self.state.state = States.PARAMS
-        print()
+        print('",\n', end="", flush=True)
         return name
 
     def __decode_parameters(
@@ -75,7 +76,7 @@ class Decoder(BaseModel):
         from ..functions import (
             get_func_struct, get_keys, set_state_type, clean_answer,
             is_ending_token, get_next_parameter, clean_raw_param,
-            clean_decoded, smart_cast
+            clean_decoded
         )
 
         raw_param: list[str] = [""]
@@ -106,10 +107,19 @@ class Decoder(BaseModel):
         i = [0]
         decoded_best_token: str = ""
         casted_param: list[str] = [""]
+        if self.state.type != Types.NULL:
+            print(
+                f'\t\t"parameters":'' {\n\t\t\t\t'f'"{param_keys[0]}": ',
+                end="",
+                flush=True
+            )
+            if self.state.type == Types.STRING:
+                print('"', end="", flush=True)
+        else:
+            print('\t\t"parameters": null\n')
+            return '"parameters": null'
         while True:
             try:
-                if self.state.type == Types.NULL:
-                    return '"parameters": null'
                 best_token: int = self.llm.get_best_token(
                     self, encoded_raw_prompt
                 )
@@ -145,6 +155,13 @@ class Decoder(BaseModel):
                 ):
                     raise IndexError
             except IndexError:
+                print(
+                    f'''{"\"\n\t\t"
+                         if "\"" in decoded_best_token
+                         else "\n\t\t"}''',
+                    end="",
+                    flush=True
+                )
                 prompt_answer[0] += f'{decoded_best_token}' + '}'
                 break
             encoded_raw_prompt.append(best_token)
@@ -156,12 +173,21 @@ class Decoder(BaseModel):
         pass
 
     def show_funcs(self) -> None:
-        for func_calling in self.function_callings:
-            prompt = func_calling.prompt
+        print("[")
+        for i in range(len(self.function_callings)):
+            prompt = self.function_callings[i].prompt
+            print(
+                "\t{\n\t\t"f'"prompt": "{prompt}",\n\t\t',
+                end="", flush=True
+            )
             func_name = self.__decode_name(
                 prompt
             )
             func_params = self.__decode_parameters(
                 func_name, prompt
             )
-            print(f"{func_name['prompt']} {func_params}")
+            func_params
+            print("}\n\t}", end="", flush=True)
+            if i < len(self.function_callings) - 1:
+                print(",")
+        print('\n]')

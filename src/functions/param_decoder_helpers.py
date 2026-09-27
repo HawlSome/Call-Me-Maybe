@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/26 11:35:23 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/27 18:51:23 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -146,9 +146,14 @@ def get_next_parameter(
     )
     casted_param[0] = casted_param[0].replace(raw_param[0], "")
     print(f"{casted_param[0]}", end="", flush=True)
+    if decoder.state.type == Types.STRING:
+        print('"', end="", flush=True)
     i[0] += 1
     p_key = param_keys[i[0]]
     set_state_type(p_key, decoder, func_name)
+    print(f',\n\t\t\t\t"{p_key}": ', end="", flush=True)
+    if decoder.state.type == Types.STRING:
+        print('"', end="", flush=True)
     added_prompt: str = (
         f'{decoded_best_token} "{param_keys[i[0]]}":"'
     )
