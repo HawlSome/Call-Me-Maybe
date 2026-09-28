@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   decoder.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/27 18:58:33 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 11:25:08 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -120,6 +120,15 @@ class Decoder(BaseModel):
             return '"parameters": null'
         while True:
             try:
+                if (
+                    '"}' in prompt_answer[0] and
+                    self.state.type == Types.STRING
+                    or
+                    '}' in prompt_answer[0] and
+                    self.state.type == Types.BOOLEAN
+                ):
+                    prompt_answer[0] += '}'
+                    break
                 best_token: int = self.llm.get_best_token(
                     self, encoded_raw_prompt
                 )
@@ -146,27 +155,16 @@ class Decoder(BaseModel):
                     )
                     raw_param[0] = ""
                     continue
-                if (
-                    '"}' in decoded_best_token and
-                    self.state.type == Types.STRING
-                    or
-                    '}' in decoded_best_token and
-                    self.state.type == Types.BOOLEAN
-                ):
-                    raise IndexError
             except IndexError:
-                print(
-                    f'''{"\"\n\t\t"
-                         if "\"" in decoded_best_token
-                         else "\n\t\t"}''',
-                    end="",
-                    flush=True
-                )
-                prompt_answer[0] += f'{decoded_best_token}' + '}'
+                prompt_answer[0] += '}'
                 break
             encoded_raw_prompt.append(best_token)
             prompt_answer[0] += self.llm.decode([best_token])
         prompt_answer[0] = clean_answer(prompt_answer[0])
+        if '"' in prompt_answer[0][-2:]:
+            print('"\n\t\t', end="", flush=True)
+        else:
+            print('\n\t\t', end="", flush=True)
         return prompt_answer[0]
 
     def function_call(self) -> None:
