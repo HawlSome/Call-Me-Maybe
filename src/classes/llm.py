@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 20:56:47 by varandri            #+#    #+#            #
-#   Updated: 2026/09/25 11:20:54 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -17,11 +17,10 @@ try:
     from llm_sdk import Small_LLM_Model  # type: ignore
     from pydantic import BaseModel, Field, ConfigDict
     from numpy import argmax
-except ModuleNotFoundError:
-    raise ModuleNotFoundError
-except KeyboardInterrupt:
-    print("Error manafo o")
+except (ModuleNotFoundError, KeyboardInterrupt) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}.")
     exit()
+
 
 if TYPE_CHECKING:
     from .decoder import Decoder

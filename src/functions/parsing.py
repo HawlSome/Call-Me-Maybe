@@ -7,18 +7,21 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/09/22 15:09:25 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 15:28:15 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-from typing import Any
-import argparse
-from json import load
-from ..classes import (
-    FunctionParameters,
-    FunctionCalling, FunctionDefinition
-)
-from typing import cast
+try:
+    from typing import Any
+    import argparse
+    from json import load
+    from ..classes import (
+        FunctionParameters,
+        FunctionCalling, FunctionDefinition
+    )
+except (ModuleNotFoundError, KeyboardInterrupt) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}.")
+    exit()
 
 
 def __parse() -> tuple[str, ...]:
@@ -53,10 +56,9 @@ def __get_json(file_name: str) -> list[
 def __store_prompts(raw_promts: Any) -> list[FunctionCalling]:
     prompts: list[FunctionCalling] = []
     for p in raw_promts:
+        # print(p)
         prompts.append(
-            FunctionCalling(
-                prompt=str(p["prompt"])
-            )
+            FunctionCalling(**p)
         )
     return prompts
 
@@ -65,8 +67,6 @@ def __srote_function_defs(raw_fd: Any) -> list[FunctionDefinition]:
     definitions: list[FunctionDefinition] = []
 
     for fd in raw_fd:
-        name: str = str(fd["name"])
-        description: str = str(fd["description"])
         parameters: list[FunctionParameters] | None = []
         fd_params: Any = fd["parameters"]
         if not fd_params:
@@ -83,18 +83,11 @@ def __srote_function_defs(raw_fd: Any) -> list[FunctionDefinition]:
                             value=v
                         )
                     )
+            fd["parameters"] = parameters
         except Exception:
             pass
-        returns: dict[str, str] = cast(
-            dict[str, str], fd["returns"]
-        )
         definitions.append(
-            FunctionDefinition(
-                name=name,
-                description=description,
-                parameters=parameters,
-                returns=returns
-            )
+            FunctionDefinition(**fd)
         )
     return definitions
 

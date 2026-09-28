@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 15:38:15 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -15,13 +15,8 @@ try:
     from .functions import parse_args
     from pydantic import ValidationError
     from .classes import Decoder
-except (ModuleNotFoundError, ImportError) as e:
-    print(f"[ERROR]: {e}")
-    exit()
-except (KeyboardInterrupt, EOFError) as e:
-    print(
-        f"[ERROR] {e.__class__.__name__}: Program has stopped."
-    )
+except (ModuleNotFoundError, KeyboardInterrupt, ImportError, EOFError) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}.")
     exit()
 
 
@@ -34,7 +29,7 @@ def main() -> None:
         )
         decoder.show_funcs()
     except KeyboardInterrupt as err:
-        print(f"[ERROR]: {err.__class__.__name__}: the program has stopped.")
+        print(f"\n[ERROR]: {err.__class__.__name__}: the program has stopped.")
     except ValidationError as e:
         print("Expected validation error:")
         for error in e.errors():

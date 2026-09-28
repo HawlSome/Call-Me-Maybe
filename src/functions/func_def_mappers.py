@@ -7,14 +7,18 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 19:05:07 by varandri            #+#    #+#            #
-#   Updated: 2026/09/24 13:47:39 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-from typing import Any, cast
-from ..classes import (
-    FunctionParameters, FunctionDefinition
-)
+try:
+    from typing import Any, cast
+    from ..classes import (
+        FunctionParameters, FunctionDefinition
+    )
+except (ModuleNotFoundError, KeyboardInterrupt) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}.")
+    exit()
 
 
 def get_func_def_names(

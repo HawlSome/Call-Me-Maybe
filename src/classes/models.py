@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/24 13:42:46 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 15:18:16 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -15,8 +15,8 @@ try:
     from typing import Any
     from .enums import States, Types
     from pydantic import BaseModel, Field, ConfigDict, model_validator
-except ModuleNotFoundError:
-    raise ModuleNotFoundError
+except (ModuleNotFoundError, KeyboardInterrupt) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}.")
     exit()
 
 
@@ -43,7 +43,7 @@ class FunctionDefinition(BaseModel):
     description: str = Field(...)
     parameters: list[FunctionParameters] | None = Field(...)
     returns: dict[str, str] = Field(...)
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="after")
     def returns_validator(self) -> "FunctionDefinition":

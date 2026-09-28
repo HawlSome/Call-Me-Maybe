@@ -7,15 +7,20 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:27:45 by varandri            #+#    #+#            #
-#   Updated: 2026/09/23 15:38:04 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-from .models import (
-    FunctionParameters,
-    FunctionCalling, FunctionDefinition
-)
-from .decoder import Decoder
+try:
+    from .models import (
+        FunctionParameters,
+        FunctionCalling, FunctionDefinition
+    )
+    from .decoder import Decoder
+except (ModuleNotFoundError, KeyboardInterrupt) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}.")
+    exit()
+
 
 __all__ = [
     'FunctionParameters',

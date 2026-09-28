@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/28 11:25:08 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,8 +19,9 @@ try:
     )
     from pydantic import BaseModel, Field, ConfigDict
     from .llm import Llm
-except ModuleNotFoundError:
-    raise ModuleNotFoundError
+except (ModuleNotFoundError, KeyboardInterrupt) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}.")
+    exit()
 
 
 class Decoder(BaseModel):

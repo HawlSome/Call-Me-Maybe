@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   param_decoder_helpers.py                             :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/27 18:51:23 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-from ..classes import FunctionDefinition, Decoder
-from ..classes.models import DecoderState
-from typing import Any
-from ..classes.enums import Types
-from .func_def_mappers import (
-    get_func_parameters
-)
+try:
+    from ..classes import FunctionDefinition, Decoder
+    from ..classes.models import DecoderState
+    from typing import Any
+    from ..classes.enums import Types
+    from .func_def_mappers import (
+        get_func_parameters
+    )
+except (ModuleNotFoundError, KeyboardInterrupt) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}.")
+    exit()
 
 
 def get_keys(
