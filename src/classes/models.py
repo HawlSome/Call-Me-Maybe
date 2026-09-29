@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/28 15:18:16 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/29 11:59:23 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -39,7 +39,7 @@ class FunctionParameters(BaseModel):
 
 
 class FunctionDefinition(BaseModel):
-    name: str = Field(..., min_length=2)
+    name: str = Field(...)
     description: str = Field(...)
     parameters: list[FunctionParameters] | None = Field(...)
     returns: dict[str, str] = Field(...)

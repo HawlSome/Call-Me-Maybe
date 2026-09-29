@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/29 11:26:35 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -81,6 +81,10 @@ def is_ending_token(
             and state.type in [Types.NUMBER, Types.INT, Types.BOOLEAN]
         ) or
         (
+            '.' in decoded_best_token
+            and state.type == Types.INT
+        ) or
+        (
             '",' in decoded_best_token
             and state.type in [Types.STRING]
         ) or
@@ -98,6 +102,8 @@ def clean_decoded(
     decoded_best_token = decoded_best_token.replace('",', '')
     if state.type in [Types.INT, Types.BOOLEAN, Types.NUMBER]:
         decoded_best_token = decoded_best_token.replace(',', '')
+    if state.type == Types.INT:
+        decoded_best_token = decoded_best_token.replace('.', '')
     decoded_best_token = decoded_best_token.replace('"', '')
     decoded_best_token = decoded_best_token.replace('}', '')
     decoded_best_token = decoded_best_token.replace('\n', '')
@@ -124,8 +130,6 @@ def clean_raw_param(raw_param: list[str]) -> None:
 
 
 def smart_cast(state: DecoderState, value: str) -> str:
-    if state.type == Types.INT:
-        value = str(int(value))
     if state.type in [Types.NUMBER, Types.FLOAT]:
         value = str(float(value))
     return value
@@ -148,7 +152,10 @@ def get_next_parameter(
     prompt_answer[0] = prompt_answer[0].replace(
         raw_param[0], casted_param[0]
     )
-    casted_param[0] = casted_param[0].replace(raw_param[0], "")
+    if len(casted_param[0]) > len(raw_param[0]):
+        casted_param[0] = casted_param[0].replace(raw_param[0], "")
+    else:
+        casted_param[0] = raw_param[0].replace(casted_param[0], "")
     print(f"{casted_param[0]}", end="", flush=True)
     if decoder.state.type == Types.STRING:
         print('"', end="", flush=True)
@@ -158,6 +165,8 @@ def get_next_parameter(
     print(f',\n\t\t\t\t"{p_key}": ', end="", flush=True)
     if decoder.state.type == Types.STRING:
         print('"', end="", flush=True)
+    if decoded_best_token == ".":
+        decoded_best_token = ","
     added_prompt: str = (
         f'{decoded_best_token} "{param_keys[i[0]]}":"'
     )

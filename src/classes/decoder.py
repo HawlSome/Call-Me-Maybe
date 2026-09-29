@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/29 13:40:59 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,6 +19,7 @@ try:
     )
     from pydantic import BaseModel, Field, ConfigDict
     from .llm import Llm
+    from json import loads, dump, JSONDecodeError
 except (ModuleNotFoundError, KeyboardInterrupt) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}.")
     exit()
@@ -32,14 +33,11 @@ class Decoder(BaseModel):
     state: DecoderState = Field(default=DecoderState())
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    def __decode_name(self, prompt: str) -> dict[str, str]:
-        from ..functions import get_func_defs
-
+    def __decode_name(
+        self, prompt: str, func_defs: list[dict[str, Any]]
+    ) -> dict[str, str]:
         self.state.state = States.NAME
         self.state.type = Types.NULL
-        func_defs: list[dict[str, Any]] = get_func_defs(
-            self.function_definitions
-        )
         name: dict[str, str] = {}
         prompt_answer: str = '"name": "'
         raw_answer: str = ""
@@ -56,9 +54,11 @@ class Decoder(BaseModel):
         )
         encoded_raw_prompt = self.llm.int_encode(raw_prompt)
         print('"name": "', end="", flush=True)
+        max_token: int = 20
         while True:
             best_token: int = self.llm.get_best_token(self, encoded_raw_prompt)
-            if '"' in self.llm.decode([best_token]):
+            max_token -= 1
+            if '"' in self.llm.decode([best_token]) or max_token <= 0:
                 prompt_answer += '", '
                 break
             print(self.llm.decode([best_token]), end="", flush=True)
@@ -117,7 +117,7 @@ class Decoder(BaseModel):
             if self.state.type == Types.STRING:
                 print('"', end="", flush=True)
         else:
-            print('\t\t"parameters": null\n')
+            print('\t\t"parameters": null\n\t}', end="", flush=True)
             return '"parameters": null'
         while True:
             try:
@@ -168,25 +168,53 @@ class Decoder(BaseModel):
             print('\n\t\t', end="", flush=True)
         return prompt_answer[0]
 
-    def function_call(self) -> None:
-        pass
-
     def show_funcs(self) -> None:
+        from ..functions import get_func_defs, get_func_def_names
+
         print("[")
+        json_calls: list[dict[str, Any]] = []
+        func_defs: list[dict[str, Any]] = get_func_defs(
+            self.function_definitions
+        )
+        func_def_names: list[str] = get_func_def_names(
+            self.function_definitions
+        )
         for i in range(len(self.function_callings)):
-            prompt = self.function_callings[i].prompt
-            print(
-                "\t{\n\t\t"f'"prompt": "{prompt}",\n\t\t',
-                end="", flush=True
-            )
-            func_name = self.__decode_name(
-                prompt
-            )
-            func_params = self.__decode_parameters(
-                func_name, prompt
-            )
-            func_params
-            print("}\n\t}", end="", flush=True)
-            if i < len(self.function_callings) - 1:
-                print(",")
+            try:
+                func_calls: str = ""
+                prompt = self.function_callings[i].prompt
+                func_calls += '{"prompt": "' + prompt.replace('\"', "") + '", '
+                print(
+                    "\t{\n\t\t"f'"prompt": "{prompt}",\n\t\t',
+                    end="", flush=True
+                )
+                func_name = self.__decode_name(
+                    prompt, func_defs
+                )
+                if '{' + func_name["prompt"][:-2] + '}' not in func_def_names:
+                    raise NameError
+                func_params = self.__decode_parameters(
+                    func_name, prompt
+                )
+                func_calls += f"{func_name['prompt']} {func_params}""}"
+                if "null" not in func_calls:
+                    print("}\n\t}", end="", flush=True)
+                if i < len(self.function_callings) - 1:
+                    print(",")
+                json_calls.append(
+                    loads(func_calls)
+                )
+            except JSONDecodeError as e:
+                print(
+                    f"[ERROR] - {JSONDecodeError.__name__}: "
+                    f"the structure of '{func_name['raw']}' "
+                    f"is an invalid json. ({e})"
+                )
+            except NameError:
+                print(
+                    f"[ERROR] - {NameError.__name__}: "
+                    f"the function '{func_name['raw']}' "
+                    "doesn't exist."
+                )
         print('\n]')
+        print(json_calls)

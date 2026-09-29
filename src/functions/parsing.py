@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/09/28 15:28:15 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/29 11:58:20 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -58,7 +58,7 @@ def __store_prompts(raw_promts: Any) -> list[FunctionCalling]:
     for p in raw_promts:
         # print(p)
         prompts.append(
-            FunctionCalling(**p)
+            FunctionCalling.model_validate(p)
         )
     return prompts
 
@@ -87,7 +87,7 @@ def __srote_function_defs(raw_fd: Any) -> list[FunctionDefinition]:
         except Exception:
             pass
         definitions.append(
-            FunctionDefinition(**fd)
+            FunctionDefinition.model_validate(fd)
         )
     return definitions
 
