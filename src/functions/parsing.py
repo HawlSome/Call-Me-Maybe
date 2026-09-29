@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/09/29 11:58:20 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/29 16:20:05 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,6 +19,8 @@ try:
         FunctionParameters,
         FunctionCalling, FunctionDefinition
     )
+    from pathlib import Path
+    from json import dump
 except (ModuleNotFoundError, KeyboardInterrupt) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}.")
     exit()
@@ -103,3 +105,10 @@ def parse_args() -> tuple[
     prompts = __store_prompts(input_content)
     definitions = __srote_function_defs(func_def_content)
     return (prompts, definitions, output_file)
+
+
+def store_JSON(json_content: list[dict[str, Any]], path_outdir: str) -> None:
+    path: Path = Path(path_outdir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open(mode="w") as file:
+        dump(json_content, file, indent=4)

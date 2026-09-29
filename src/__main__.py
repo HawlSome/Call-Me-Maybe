@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/29 16:17:42 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -27,7 +27,7 @@ def main() -> None:
             function_definitions=fn_defs,
             function_callings=prompts
         )
-        decoder.show_funcs()
+        decoder.get_fun_calls(path_outdir=output)
     except KeyboardInterrupt as err:
         print(f"\n[ERROR]: {err.__class__.__name__}: the program has stopped.")
     except ValidationError as e:

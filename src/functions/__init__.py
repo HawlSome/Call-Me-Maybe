@@ -7,12 +7,12 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:18:26 by varandri            #+#    #+#            #
-#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/29 16:13:33 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
-    from .parsing import parse_args
+    from .parsing import parse_args, store_JSON
     from .func_def_mappers import (
         get_func_def_names, get_func_defs, get_func_parameters, get_func_struct
     )
@@ -26,7 +26,7 @@ except (ModuleNotFoundError, KeyboardInterrupt) as e:
 
 
 __all__ = [
-    'parse_args',
+    'parse_args', 'store_JSON',
     'get_func_def_names', 'get_func_defs', 'get_func_parameters',
     'get_func_struct',
     'set_state_type', 'get_keys', 'clean_answer', 'is_ending_token',

@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/29 13:40:59 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/29 16:30:25 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,7 +19,7 @@ try:
     )
     from pydantic import BaseModel, Field, ConfigDict
     from .llm import Llm
-    from json import loads, dump, JSONDecodeError
+    from json import loads, JSONDecodeError
 except (ModuleNotFoundError, KeyboardInterrupt) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}.")
     exit()
@@ -168,8 +168,10 @@ class Decoder(BaseModel):
             print('\n\t\t', end="", flush=True)
         return prompt_answer[0]
 
-    def show_funcs(self) -> None:
-        from ..functions import get_func_defs, get_func_def_names
+    def get_fun_calls(
+        self, path_outdir: str = "data/output/function_calls.json"
+    ) -> None:
+        from ..functions import get_func_defs, get_func_def_names, store_JSON
 
         print("[")
         json_calls: list[dict[str, Any]] = []
@@ -183,7 +185,10 @@ class Decoder(BaseModel):
             try:
                 func_calls: str = ""
                 prompt = self.function_callings[i].prompt
-                func_calls += '{"prompt": "' + prompt.replace('\"', "") + '", '
+                func_calls += (
+                    '{"prompt": "' +
+                    prompt.replace('\"', "\\\"") + '", '
+                )
                 print(
                     "\t{\n\t\t"f'"prompt": "{prompt}",\n\t\t',
                     end="", flush=True
@@ -217,4 +222,4 @@ class Decoder(BaseModel):
                     "doesn't exist."
                 )
         print('\n]')
-        print(json_calls)
+        store_JSON(json_calls, path_outdir=path_outdir)
