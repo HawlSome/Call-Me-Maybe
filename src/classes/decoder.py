@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 12:42:53 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 13:11:18 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -214,17 +214,23 @@ class Decoder(BaseModel):
                 json_calls.append(
                     loads(func_calls)
                 )
+                store_JSON(json_calls, path_outdir=path_outdir)
             except JSONDecodeError as e:
                 print(
                     f"[ERROR] - {JSONDecodeError.__name__}: "
                     f"the structure of '{func_name['raw']}' "
                     f"is an invalid json. ({e})"
                 )
+                store_JSON(json_calls, path_outdir=path_outdir)
             except NameError:
                 print(
                     f"[ERROR] - {NameError.__name__}: "
                     f"the function '{func_name['raw']}' "
                     "doesn't exist in the function definitions."
                 )
-        print('\n]')
-        store_JSON(json_calls, path_outdir=path_outdir)
+                store_JSON(json_calls, path_outdir=path_outdir)
+        if not self.function_definitions:
+            print('\r]')
+            store_JSON(json_calls, path_outdir=path_outdir)
+        else:
+            print('\n]')
