@@ -7,9 +7,15 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:18:26 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 12:42:32 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 13:49:31 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
+"""Public exports for the functions package.
+
+This module exposes the parsing and helper utilities used by the decoding
+pipeline.
+"""
 
 try:
     from .parsing import parse_args, store_JSON

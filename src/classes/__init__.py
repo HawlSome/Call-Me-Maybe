@@ -7,9 +7,15 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:27:45 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 12:42:58 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 13:41:08 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
+"""Public exports for the classes package.
+
+This module exposes the model types and decoder entry point used across the
+project.
+"""
 
 try:
     from .models import (

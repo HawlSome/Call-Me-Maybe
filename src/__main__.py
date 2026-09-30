@@ -7,9 +7,15 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:17:29 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 13:53:19 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
+"""Command-line entry point for the project.
+
+This module parses the runtime arguments and starts the decoding pipeline
+used to generate function calls from the provided prompts.
+"""
 
 try:
     from .functions import parse_args
@@ -28,6 +34,11 @@ except (KeyboardInterrupt, EOFError) as e:
 
 
 def main() -> None:
+    """Run the command-line application.
+
+    Returns:
+        None. The decoded function calls are printed and persisted to disk.
+    """
     try:
         prompts, fn_defs, output = parse_args()
         decoder = Decoder(

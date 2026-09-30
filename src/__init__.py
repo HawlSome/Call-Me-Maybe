@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # ########################################################################### #
 #                                                                             #
 #                                                          :::      ::::::::  #
@@ -6,9 +7,15 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 15:09:25 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 12:41:46 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 13:52:40 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
+"""Project package initialization.
+
+This package exposes the application submodules used by the command-line
+entry point and the decoder pipeline.
+"""
 
 try:
     from . import functions, classes

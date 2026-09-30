@@ -7,9 +7,15 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 12:42:13 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 13:51:14 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
+"""Helper utilities for parameter decoding.
+
+This module provides functions used to normalize decoded values, identify
+parameter boundaries, and move the decoder between parameter fields.
+"""
 
 try:
     from ..classes import FunctionDefinition, Decoder
@@ -33,6 +39,16 @@ except (KeyboardInterrupt, EOFError) as e:
 def get_keys(
     function_definitions: list[FunctionDefinition], func_name: str
 ) -> list[str]:
+    """Return the parameter names for a selected function.
+
+    Args:
+        function_definitions: Available function definitions.
+        func_name: Name of the selected function.
+
+    Returns:
+        A list of parameter names. Returns ``["null"]`` if no parameter
+        structure can be resolved.
+    """
     try:
         keys: list[str] = []
         param_structure: dict[str, Any] = (
@@ -48,6 +64,16 @@ def __get_type(
     key: str,
     function_definitions: list[FunctionDefinition], func_name: str
 ) -> str:
+    """Resolve the declared type for a parameter key.
+
+    Args:
+        key: Parameter name.
+        function_definitions: Available function definitions.
+        func_name: Name of the selected function.
+
+    Returns:
+        The parameter type as a string.
+    """
     k_type: str = ""
     param_structure: dict[str, Any] = (
         get_func_parameters(function_definitions, func_name)
@@ -57,6 +83,13 @@ def __get_type(
 
 
 def set_state_type(key: str, decoder: Decoder, func_name: str) -> None:
+    """Set the decoder state according to the selected parameter type.
+
+    Args:
+        key: Parameter name to inspect.
+        decoder: Current decoder instance.
+        func_name: Function whose parameter schema is being used.
+    """
     try:
         k_type: str = __get_type(
             key, decoder.function_definitions, func_name
@@ -81,6 +114,16 @@ def set_state_type(key: str, decoder: Decoder, func_name: str) -> None:
 def is_ending_token(
     state: DecoderState, decoded_best_token: str, max_token: int
 ) -> bool:
+    """Determine whether the current token ends the active parameter value.
+
+    Args:
+        state: Decoder state.
+        decoded_best_token: Last decoded token.
+        max_token: Remaining token budget.
+
+    Returns:
+        True if the token marks the end of the parameter value.
+    """
     return (
         (
             ',' in decoded_best_token
@@ -102,6 +145,16 @@ def clean_decoded(
     decoded_best_token: str, raw_param: list[str],
     state: DecoderState
 ) -> str:
+    """Normalize a decoded token value for output formatting.
+
+    Args:
+        decoded_best_token: Token string received from the model.
+        raw_param: Accumulated raw parameter content.
+        state: Decoder state containing the current type.
+
+    Returns:
+        Cleaned token string.
+    """
     if raw_param[0].startswith(' '):
         decoded_best_token = decoded_best_token.lstrip()
     decoded_best_token = decoded_best_token.replace('",', '')
@@ -117,6 +170,14 @@ def clean_decoded(
 
 
 def clean_answer(prompt_answer: str) -> str:
+    """Clean final parameter output before JSON serialization.
+
+    Args:
+        prompt_answer: Raw decoded parameter answer text.
+
+    Returns:
+        Cleaned output string ready for JSON usage.
+    """
     prompt_answer = prompt_answer.replace(",}", "}")
     prompt_answer = prompt_answer.replace("}}", "}")
     prompt_answer = prompt_answer.replace("}\n}", "}")
@@ -129,6 +190,11 @@ def clean_answer(prompt_answer: str) -> str:
 
 
 def clean_raw_param(raw_param: list[str]) -> None:
+    """Strip formatting noise from the raw parameter accumulator.
+
+    Args:
+        raw_param: Current raw parameter value buffer.
+    """
     raw_param[0] = raw_param[0].replace(',', '')
     raw_param[0] = raw_param[0].replace('"', '')
     raw_param[0] = raw_param[0].replace('"}', '')
@@ -136,6 +202,15 @@ def clean_raw_param(raw_param: list[str]) -> None:
 
 
 def smart_cast(state: DecoderState, value: str) -> str:
+    """Cast a decoded value to the expected numeric representation.
+
+    Args:
+        state: Decoder state containing the expected parameter type.
+        value: Decoded value as text.
+
+    Returns:
+        Cast value as a string.
+    """
     if state.type in [Types.NUMBER, Types.FLOAT]:
         value = str(float(value))
     return value
@@ -148,6 +223,20 @@ def get_next_parameter(
     encoded_raw_prompt: list[int], prompt_answer: list[str],
     raw_param: list[str], casted_param: list[str]
 ) -> None:
+    """Advance the decoder to the next parameter key.
+
+    Args:
+        decoder: Current decoder instance.
+        func_name: Function currently being decoded.
+        param_keys: Parameter names for the selected function.
+        max_token: Remaining token budget for the current parameter.
+        i: Current parameter index.
+        decoded_best_token: Last decoded token.
+        encoded_raw_prompt: Prompt token buffer.
+        prompt_answer: Accumulated prompt answer string.
+        raw_param: Raw parameter value buffer.
+        casted_param: Casted parameter value buffer.
+    """
     if max_token[0] <= 0 and decoder.state.type in [
         Types.INT or Types.NUMBER
     ]:

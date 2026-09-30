@@ -7,9 +7,15 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:29:20 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 13:43:58 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
+"""Decoder implementation for function-call generation.
+
+This module is responsible for selecting the correct function name and
+recovering the corresponding parameter values from model output.
+"""
 
 try:
     from typing import Any
@@ -32,6 +38,16 @@ except (KeyboardInterrupt, EOFError) as e:
 
 
 class Decoder(BaseModel):
+    """Decodes function names and parameters from model output.
+
+    Attributes:
+        llm: Language model instance used to generate tokens.
+        function_definitions: Registered function definitions.
+        function_callings: User prompts to decode into function calls.
+        output_file: Destination JSON file for generated calls.
+        state: Decoder run state and type tracking information.
+    """
+
     llm: Llm = Field(default=Llm())
     function_definitions: list[FunctionDefinition] = Field(...)
     function_callings: list[FunctionCalling] = Field(...)
@@ -42,6 +58,16 @@ class Decoder(BaseModel):
     def __decode_name(
         self, prompt: str, func_defs: list[dict[str, Any]]
     ) -> dict[str, str]:
+        """Select the most relevant function from a prompt.
+
+        Args:
+            prompt: User prompt describing the target function.
+            func_defs: Available function definitions used for selection.
+
+        Returns:
+            A dictionary containing the raw and formatted function name
+            selection.
+        """
         self.state.state = States.NAME
         self.state.type = Types.NULL
         name: dict[str, str] = {}
@@ -80,6 +106,15 @@ class Decoder(BaseModel):
     def __decode_parameters(
             self, func_name: dict[str, str], prompt: str
     ) -> str:
+        """Decode the parameters associated with a selected function.
+
+        Args:
+            func_name: Dictionary with the selected function name and prompt.
+            prompt: Original user prompt used to retrieve values.
+
+        Returns:
+            A JSON-like string containing the decoded function parameters.
+        """
         from ..functions import (
             get_func_struct, get_keys, set_state_type, clean_answer,
             is_ending_token, get_next_parameter, clean_raw_param,
@@ -177,6 +212,14 @@ class Decoder(BaseModel):
     def get_fun_calls(
         self, path_outdir: str = "data/output/function_calls.json"
     ) -> None:
+        """Generate and store function calls from registered prompts.
+
+        Args:
+            path_outdir: Output path used to write the JSON result.
+
+        Returns:
+            None. The generated calls are printed and stored in a file.
+        """
         from ..functions import get_func_defs, get_func_def_names, store_JSON
         json_calls: list[dict[str, Any]] = []
         func_defs: list[dict[str, Any]] = get_func_defs(
