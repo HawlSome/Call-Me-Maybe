@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/29 16:30:25 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 12:42:53 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -20,8 +20,14 @@ try:
     from pydantic import BaseModel, Field, ConfigDict
     from .llm import Llm
     from json import loads, JSONDecodeError
-except (ModuleNotFoundError, KeyboardInterrupt) as e:
-    print(f"\n[ERROR] - {e.__class__.__name__}.")
+except (ModuleNotFoundError, ImportError) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
+    exit()
+except (KeyboardInterrupt, EOFError) as e:
+    print(
+        f"\n[ERROR] - {e.__class__.__name__}: "
+        "the program has stopped unexpectedly."
+    )
     exit()
 
 
@@ -172,7 +178,6 @@ class Decoder(BaseModel):
         self, path_outdir: str = "data/output/function_calls.json"
     ) -> None:
         from ..functions import get_func_defs, get_func_def_names, store_JSON
-
         print("[")
         json_calls: list[dict[str, Any]] = []
         func_defs: list[dict[str, Any]] = get_func_defs(
@@ -219,7 +224,7 @@ class Decoder(BaseModel):
                 print(
                     f"[ERROR] - {NameError.__name__}: "
                     f"the function '{func_name['raw']}' "
-                    "doesn't exist."
+                    "doesn't exist in the function definitions."
                 )
         print('\n]')
         store_JSON(json_calls, path_outdir=path_outdir)

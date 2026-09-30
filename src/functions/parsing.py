@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/09/29 16:20:05 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 12:41:54 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -21,8 +21,14 @@ try:
     )
     from pathlib import Path
     from json import dump
-except (ModuleNotFoundError, KeyboardInterrupt) as e:
-    print(f"\n[ERROR] - {e.__class__.__name__}.")
+except (ModuleNotFoundError, ImportError) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
+    exit()
+except (KeyboardInterrupt, EOFError) as e:
+    print(
+        f"\n[ERROR] - {e.__class__.__name__}: "
+        "the program has stopped unexpectedly."
+    )
     exit()
 
 
@@ -50,7 +56,8 @@ def __get_json(file_name: str) -> list[
     func_def: list[
         dict[str, str | dict[str, str | dict[str, str]]]
     ] = []
-    with open(file_name, "r") as file:
+    file_path: Path = Path(file_name)
+    with file_path.open(mode="r") as file:
         func_def = load(file)
     return func_def
 

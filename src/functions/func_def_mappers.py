@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 19:05:07 by varandri            #+#    #+#            #
-#   Updated: 2026/09/28 13:09:21 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 12:42:28 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -16,8 +16,14 @@ try:
     from ..classes import (
         FunctionParameters, FunctionDefinition
     )
-except (ModuleNotFoundError, KeyboardInterrupt) as e:
-    print(f"\n[ERROR] - {e.__class__.__name__}.")
+except (ModuleNotFoundError, ImportError) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
+    exit()
+except (KeyboardInterrupt, EOFError) as e:
+    print(
+        f"\n[ERROR] - {e.__class__.__name__}: "
+        "the program has stopped unexpectedly."
+    )
     exit()
 
 

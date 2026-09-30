@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:18:26 by varandri            #+#    #+#            #
-#   Updated: 2026/09/29 16:13:33 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 12:42:32 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -20,8 +20,14 @@ try:
         set_state_type, get_keys, clean_answer, is_ending_token,
         get_next_parameter, clean_raw_param, clean_decoded, smart_cast
     )
-except (ModuleNotFoundError, KeyboardInterrupt) as e:
-    print(f"\n[ERROR] - {e.__class__.__name__}.")
+except (ModuleNotFoundError, ImportError) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
+    exit()
+except (KeyboardInterrupt, EOFError) as e:
+    print(
+        f"\n[ERROR] - {e.__class__.__name__}: "
+        "the program has stopped unexpectedly."
+    )
     exit()
 
 
