@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:11:18 by varandri           ###   ########.fr      #
+#   Updated: 2026/09/30 13:29:20 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -178,7 +178,6 @@ class Decoder(BaseModel):
         self, path_outdir: str = "data/output/function_calls.json"
     ) -> None:
         from ..functions import get_func_defs, get_func_def_names, store_JSON
-        print("[")
         json_calls: list[dict[str, Any]] = []
         func_defs: list[dict[str, Any]] = get_func_defs(
             self.function_definitions
@@ -186,6 +185,8 @@ class Decoder(BaseModel):
         func_def_names: list[str] = get_func_def_names(
             self.function_definitions
         )
+        store_JSON(json_calls, path_outdir=path_outdir)
+        print("[")
         for i in range(len(self.function_callings)):
             try:
                 func_calls: str = ""
@@ -221,16 +222,13 @@ class Decoder(BaseModel):
                     f"the structure of '{func_name['raw']}' "
                     f"is an invalid json. ({e})"
                 )
-                store_JSON(json_calls, path_outdir=path_outdir)
             except NameError:
                 print(
                     f"[ERROR] - {NameError.__name__}: "
                     f"the function '{func_name['raw']}' "
                     "doesn't exist in the function definitions."
                 )
-                store_JSON(json_calls, path_outdir=path_outdir)
         if not self.function_definitions:
-            print('\r]')
-            store_JSON(json_calls, path_outdir=path_outdir)
-        else:
-            print('\n]')
+            print(']')
+            return
+        print('\n]')
