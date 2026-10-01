@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/01 15:37:26 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 23:19:08 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -51,7 +51,7 @@ class FunctionParameters(BaseModel):
             raise ValueError(
                 "The format of parameters in functions definition is invalid"
             )
-        if not self.value.get("type"):
+        if not self.value.get("type") or not self.value.get("TYPE"):
             raise ValueError(
                 "The format of parameters in functions definition is invalid"
             )
@@ -81,7 +81,7 @@ class FunctionDefinition(BaseModel):
             raise ValueError(
                 "The format of returns in functions definition is invalid"
             )
-        if not self.returns.get("type"):
+        if not self.returns.get("type") or not self.returns.get("TYPE"):
             raise ValueError(
                 "The format of returns in functions definition is invalid"
             )
