@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/01 14:15:59 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 15:37:26 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,7 +19,6 @@ decoder.
 """
 
 try:
-    from typing import Any
     from .enums import States, Types
     from pydantic import BaseModel, Field, ConfigDict, model_validator
 except (ModuleNotFoundError, ImportError) as e:

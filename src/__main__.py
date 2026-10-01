@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:53:19 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 16:09:43 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -39,13 +39,17 @@ def main() -> None:
     Returns:
         None. The decoded function calls are printed and persisted to disk.
     """
+    prompts, fn_defs, output = parse_args()
+    decoder = Decoder(
+        function_definitions=fn_defs,
+        function_callings=prompts
+    )
+    decoder.get_fun_calls(path_outdir=output)
+
+
+if __name__ == "__main__":
     try:
-        prompts, fn_defs, output = parse_args()
-        decoder = Decoder(
-            function_definitions=fn_defs,
-            function_callings=prompts
-        )
-        decoder.get_fun_calls(path_outdir=output)
+        main()
     except KeyboardInterrupt as err:
         print(
             f"\n[ERROR] - {err.__class__.__name__}: "
@@ -74,7 +78,5 @@ def main() -> None:
         for error in e.errors():
             msg: str | None = error.get("msg")
             print(f"- {msg}")
-
-
-if __name__ == "__main__":
-    main()
+    except (ModuleNotFoundError, ImportError) as e:
+        print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")

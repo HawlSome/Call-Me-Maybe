@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:43:58 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 18:07:00 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -25,7 +25,7 @@ try:
     )
     from pydantic import BaseModel, Field, ConfigDict
     from .llm import Llm
-    from json import loads, JSONDecodeError
+    from json import dumps, loads, JSONDecodeError
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     exit()
@@ -97,6 +97,9 @@ class Decoder(BaseModel):
             prompt_answer += self.llm.decode([best_token])
             raw_answer += self.llm.decode([best_token])
             encoded_raw_prompt.append(best_token)
+        prompt_answer = prompt_answer.replace(
+            f'"{raw_answer}"', dumps(raw_answer)
+        )
         name["prompt"] = prompt_answer
         name["raw"] = raw_answer
         self.state.state = States.PARAMS
@@ -116,9 +119,9 @@ class Decoder(BaseModel):
             A JSON-like string containing the decoded function parameters.
         """
         from ..functions import (
-            get_func_struct, get_keys, set_state_type, clean_answer,
-            is_ending_token, get_next_parameter, clean_raw_param,
-            clean_decoded
+            get_func_struct, get_keys, set_state_type,
+            is_ending_token, get_next_parameter,
+            smart_strip, is_ending_parameters
         )
 
         raw_param: list[str] = [""]
@@ -139,13 +142,13 @@ class Decoder(BaseModel):
             'end each found value with a ". '
             f"Function structure: {func_struct}. "
             "{"
-            f'"prompt": "{prompt}", '
+            f'"prompt": {dumps(prompt)}, '
             f'"{func_name["raw"]}", "parameters":{prompt_answer[0]}'
         )
         encoded_raw_prompt = self.llm.int_encode(raw_prompt)
         max_token = [150]
         if self.state.type in [Types.INT, Types.NUMBER]:
-            max_token[0] = 9
+            max_token[0] = 15
         i = [0]
         decoded_best_token: str = ""
         casted_param: list[str] = [""]
@@ -162,27 +165,21 @@ class Decoder(BaseModel):
             return '"parameters": null'
         while True:
             try:
-                if (
-                    '"}' in prompt_answer[0] and
-                    self.state.type == Types.STRING
-                    or
-                    '}' in prompt_answer[0] and
-                    self.state.type == Types.BOOLEAN
-                ):
-                    prompt_answer[0] += '}'
-                    break
                 best_token: int = self.llm.get_best_token(
                     self, encoded_raw_prompt
                 )
                 decoded_best_token = self.llm.decode([best_token])
+                if (is_ending_parameters(
+                        self.state, decoded_best_token, prompt_answer[0]
+                )):
+                    if (
+                        self.state.type ==
+                        Types.STRING and not prompt_answer[0].endswith('"')
+                    ):
+                        prompt_answer[0] += '"'
+                    prompt_answer[0] = prompt_answer[0].split('}', 1)[0] + '}'
+                    break
                 max_token[0] -= 1
-                raw_param[0] += decoded_best_token
-                clean_raw_param(raw_param)
-                print(
-                    clean_decoded(decoded_best_token, raw_param, self.state),
-                    end="", flush=True
-                )
-                raw_param[0] = raw_param[0].lstrip()
                 if is_ending_token(
                     self.state, decoded_best_token,
                     max_token[0]
@@ -198,16 +195,27 @@ class Decoder(BaseModel):
                     raw_param[0] = ""
                     continue
             except IndexError:
+                if prompt_answer[0].endswith(','):
+                    prompt_answer[0] = prompt_answer[0].rsplit(',')[0]
+                if (
+                    self.state.type ==
+                    Types.STRING and not prompt_answer[0].endswith('"')
+                ):
+                    prompt_answer[0] += '"'
                 prompt_answer[0] += '}'
                 break
+            raw_param[0] += decoded_best_token
+            print(
+                smart_strip(decoded_best_token, raw_param, self.state),
+                end="", flush=True
+            )
             encoded_raw_prompt.append(best_token)
             prompt_answer[0] += self.llm.decode([best_token])
-        prompt_answer[0] = clean_answer(prompt_answer[0])
         if '"' in prompt_answer[0][-2:]:
             print('"\n\t\t', end="", flush=True)
         else:
             print('\n\t\t', end="", flush=True)
-        return prompt_answer[0]
+        return f'"parameters": {prompt_answer[0]}'
 
     def get_fun_calls(
         self, path_outdir: str = "data/output/function_calls.json"
@@ -235,11 +243,10 @@ class Decoder(BaseModel):
                 func_calls: str = ""
                 prompt = self.function_callings[i].prompt
                 func_calls += (
-                    '{"prompt": "' +
-                    prompt.replace('\"', "\\\"") + '", '
+                    '{"prompt": ' + dumps(prompt) + ', '
                 )
                 print(
-                    "\t{\n\t\t"f'"prompt": "{prompt}",\n\t\t',
+                    "\t{\n\t\t"f'"prompt": {dumps(prompt)},\n\t\t',
                     end="", flush=True
                 )
                 func_name = self.__decode_name(

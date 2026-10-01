@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:51:14 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 18:13:15 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -141,7 +141,35 @@ def is_ending_token(
     )
 
 
-def clean_decoded(
+def is_ending_parameters(
+    state: DecoderState, decoded_best_token: str, prompt_answer: str
+) -> bool:
+    """Determine whether all the parameters are generated.
+
+    Args:
+        state: Decoder state.
+        decoded_best_token: Last decoded token.
+        max_token: Remaining token budget.
+
+    Returns:
+        True if the token mark that all parameters were generated.
+    """
+    return (
+        '"}' in decoded_best_token and
+        state.type == Types.STRING
+        or
+        '"}' in prompt_answer and
+        state.type == Types.STRING
+        or
+        '}' in decoded_best_token and
+        state.type == Types.BOOLEAN
+        or
+        '}' in prompt_answer and
+        state.type == Types.BOOLEAN
+    )
+
+
+def smart_strip(
     decoded_best_token: str, raw_param: list[str],
     state: DecoderState
 ) -> str:
@@ -153,52 +181,12 @@ def clean_decoded(
         state: Decoder state containing the current type.
 
     Returns:
-        Cleaned token string.
+        Striped token string.
     """
-    if raw_param[0].startswith(' '):
-        decoded_best_token = decoded_best_token.lstrip()
-    decoded_best_token = decoded_best_token.replace('",', '')
-    decoded_best_token = decoded_best_token.replace('",', '')
-    if state.type in [Types.INT, Types.BOOLEAN, Types.NUMBER]:
-        decoded_best_token = decoded_best_token.replace(',', '')
-    if state.type == Types.INT:
-        decoded_best_token = decoded_best_token.replace('.', '')
-    decoded_best_token = decoded_best_token.replace('"', '')
-    decoded_best_token = decoded_best_token.replace('}', '')
-    decoded_best_token = decoded_best_token.replace('\n', '')
+    if raw_param[0].startswith(' "'):
+        decoded_best_token = decoded_best_token.lstrip(' "')
+        raw_param[0] = raw_param[0].lstrip(' "')
     return decoded_best_token
-
-
-def clean_answer(prompt_answer: str) -> str:
-    """Clean final parameter output before JSON serialization.
-
-    Args:
-        prompt_answer: Raw decoded parameter answer text.
-
-    Returns:
-        Cleaned output string ready for JSON usage.
-    """
-    prompt_answer = prompt_answer.replace(",}", "}")
-    prompt_answer = prompt_answer.replace("}}", "}")
-    prompt_answer = prompt_answer.replace("}\n}", "}")
-    prompt_answer = prompt_answer.replace("}.}", "}")
-    prompt_answer = prompt_answer.replace('""', '"')
-    prompt_answer = prompt_answer.replace('" +"', '')
-    prompt_answer = prompt_answer.replace(',"}', '}')
-    prompt_answer = '"parameters": ' + prompt_answer
-    return prompt_answer
-
-
-def clean_raw_param(raw_param: list[str]) -> None:
-    """Strip formatting noise from the raw parameter accumulator.
-
-    Args:
-        raw_param: Current raw parameter value buffer.
-    """
-    raw_param[0] = raw_param[0].replace(',', '')
-    raw_param[0] = raw_param[0].replace('"', '')
-    raw_param[0] = raw_param[0].replace('"}', '')
-    raw_param[0] = raw_param[0].replace('\n', '')
 
 
 def smart_cast(state: DecoderState, value: str) -> str:
@@ -253,7 +241,9 @@ def get_next_parameter(
         casted_param[0] = raw_param[0].replace(casted_param[0], "")
     print(f"{casted_param[0]}", end="", flush=True)
     if decoder.state.type == Types.STRING:
-        print('"', end="", flush=True)
+        delimiter = decoded_best_token.rsplit('"')[0]
+        decoded_best_token = f'{delimiter}",'
+        print(f'{delimiter}"', end="", flush=True)
     i[0] += 1
     p_key = param_keys[i[0]]
     set_state_type(p_key, decoder, func_name)
@@ -273,6 +263,6 @@ def get_next_parameter(
     encoded_raw_prompt.extend(
         decoder.llm.int_encode(added_prompt)
     )
-    max_token[0] = 150
+    max_token[0] = 100
     if decoder.state.type in [Types.INT, Types.NUMBER]:
-        max_token[0] = 9
+        max_token[0] = 15

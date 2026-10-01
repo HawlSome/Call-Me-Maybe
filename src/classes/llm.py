@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 20:56:47 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:45:29 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 15:33:57 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -130,7 +130,8 @@ class Llm(BaseModel):
                 return encoded_numeric_mask
 
             def get_encoded_str_mask() -> list[int]:
-                """Return the tokens allowed when decoding string values."""
+                """Return the tokens not
+                allowed when decoding string values."""
                 encoded_str_mask: list[int] = []
                 for ch in '\"':
                     encoded_str_mask.extend(self.int_encode(ch))
