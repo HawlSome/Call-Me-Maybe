@@ -1,6 +1,6 @@
 [
   {
-    "prompt": "What is the sum of -2 and 3?"
+    "prompt": "What is the sum of 2 and 3?"
   },
   {
     "prompt": "What is the sum of 265 and 345?"
@@ -30,6 +30,6 @@
     "prompt": "Replace all vowels in 'Programming is fun' with asterisks"
   },
   {
-    "prompt": "Substitute the word 'cat' with 'dog' in 'The cat sat on the mat, with another cat'"
+    "prompt": "Substitute the word 'cat' with 'dog' in 'The cat sat on the mat with another cat'"
   }
 ]

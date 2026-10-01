@@ -19,5 +19,8 @@ llm_sdk = {path = "./llm_sdk"}
 module = ["pydantic.*", "llm_sdk.*", "numpy.*"]
 ignore_missing_imports = true
 
+[tool.mypy]
+disable_error_code = ["import-not-found"]
+
 [tool.pyright]
 reportMissingImports = false
