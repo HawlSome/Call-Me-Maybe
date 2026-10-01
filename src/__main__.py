@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/01 16:09:43 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 19:22:57 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -80,3 +80,5 @@ if __name__ == "__main__":
             print(f"- {msg}")
     except (ModuleNotFoundError, ImportError) as e:
         print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
+    except (ValueError, TypeError) as e:
+        print(f"\n[ERROR] - {e.__class__.__name__}: Invalid value Type.")

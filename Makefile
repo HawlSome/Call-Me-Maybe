@@ -6,7 +6,7 @@
 #    By: varandri <varandri@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/14 10:11:34 by varandri          #+#    #+#              #
-#    Updated: 2026/09/20 00:24:57 by varandri         ###   ########.fr        #
+#    Updated: 2026/10/01 19:19:41 by varandri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,15 @@ run: install
 install:
 	@mkdir -p $(DIR)
 	@uv sync
+
+debug: install
+	@uv run python -m pdb -m src \
+	--functions_definition data/input/functions_definition.json \
+	--input data/input/function_calling_tests.json \
+	--output data/output/function_calls.json
+
+clean:
+	@find . -type d -name "*cache*" | xargs rm -rf
 	
 lint:
 	@$(FLAKE8) . --exclude "llm_sdk/"
@@ -39,10 +48,5 @@ lint-strict:
 	@$(FLAKE8) . --exclude "llm_sdk/"
 	@$(MYPY)  . --strict --exclude "llm_sdk/"
 
-clean:
-	@find . -type d -name "*cache*" | xargs rm -rf
-
-list: install
-	uv pip list --python $(DIR)/env/bin/python
 
 .PHONY = run install clean lint lint-strict list
