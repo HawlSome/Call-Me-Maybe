@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/10/01 18:07:00 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 19:41:00 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -34,6 +34,9 @@ except (KeyboardInterrupt, EOFError) as e:
         f"\n[ERROR] - {e.__class__.__name__}: "
         "the program has stopped unexpectedly."
     )
+    exit()
+except (ValueError, TypeError) as e:
+    print(f"\n[ERROR] - {e.__class__.__name__}: Invalid value Type.")
     exit()
 
 
