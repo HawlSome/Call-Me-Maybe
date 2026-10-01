@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/10/01 18:13:15 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 23:11:41 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -107,6 +107,8 @@ def set_state_type(key: str, decoder: Decoder, func_name: str) -> None:
             decoder.state.type = Types.BOOLEAN
         elif k_type in "null":
             decoder.state.type = Types.NULL
+        else:
+            decoder.state.type = Types.STRING
     except Exception:
         decoder.state.type = Types.NULL
 
