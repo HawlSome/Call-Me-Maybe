@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:48:22 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/01 14:15:59 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -97,21 +97,6 @@ class FunctionCalling(BaseModel):
     """
 
     prompt: str = Field(...)
-    model_config = ConfigDict(extra="forbid")
-
-
-class FunctionOutput(BaseModel):
-    """Structured output for a decoded function call.
-
-    Attributes:
-        prompt: Original prompt associated with the call.
-        name: Name of the selected function.
-        parameters: Decoded arguments passed to the function.
-    """
-
-    prompt: str = Field(...)
-    name: str = Field(...)
-    parameters: dict[str, Any]
     model_config = ConfigDict(extra="forbid")
 
 
