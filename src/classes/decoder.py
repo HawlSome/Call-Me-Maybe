@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   decoder.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:55:00 by varandri            #+#    #+#            #
-#   Updated: 2026/10/01 19:41:00 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/04 18:29:03 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -214,7 +214,7 @@ class Decoder(BaseModel):
             )
             encoded_raw_prompt.append(best_token)
             prompt_answer[0] += self.llm.decode([best_token])
-        if '"' in prompt_answer[0][-2:]:
+        if '"' in prompt_answer[0][-2:] and not raw_param[0].endswith('"'):
             print('"\n\t\t', end="", flush=True)
         else:
             print('\n\t\t', end="", flush=True)

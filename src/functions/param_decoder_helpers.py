@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   param_decoder_helpers.py                             :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/22 21:11:40 by varandri            #+#    #+#            #
-#   Updated: 2026/10/01 23:16:57 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/04 18:20:39 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -157,16 +157,10 @@ def is_ending_parameters(
         True if the token mark that all parameters were generated.
     """
     return (
-        '"}' in decoded_best_token and
+        '"}' in prompt_answer + decoded_best_token and
         state.type == Types.STRING
         or
-        '"}' in prompt_answer and
-        state.type == Types.STRING
-        or
-        '}' in decoded_best_token and
-        state.type == Types.BOOLEAN
-        or
-        '}' in prompt_answer and
+        '}' in prompt_answer + decoded_best_token and
         state.type == Types.BOOLEAN
     )
 
