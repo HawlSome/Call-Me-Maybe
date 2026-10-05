@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   enums.py                                             :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:51:21 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:44:23 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 10:17:44 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -31,7 +31,6 @@ class Types(Enum):
     """Supported parameter types for decoded values."""
 
     STRING = "string"
-    NUMBER = "number"
     INT = "integer"
     FLOAT = "float"
     BOOLEAN = "boolean"
