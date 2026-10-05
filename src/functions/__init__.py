@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:18:26 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 11:45:24 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 12:56:53 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,7 +19,10 @@ pipeline.
 
 try:
     from .parser import parse_args, store_JSON
-    from .model_mappers import get_function_names
+    from .model_mappers import (
+        get_function_names, get_function_struct,
+        get_function_parameters_keys
+    )
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     exit()
@@ -33,7 +36,7 @@ except (KeyboardInterrupt, EOFError) as e:
 
 __all__ = [
     'parse_args', 'store_JSON',
-    'get_function_names'
+    'get_function_names', 'get_function_struct', 'get_function_parameters_keys'
     # 'get_func_def_names', 'get_func_defs', 'get_func_parameters',
     # 'get_func_struct',
     # 'set_state_type', 'get_keys', 'is_ending_token',
