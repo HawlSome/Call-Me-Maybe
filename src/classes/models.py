@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 12:33:22 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 22:47:53 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -87,7 +87,7 @@ class FunctionCalling(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class DecoderState(BaseModel):
+class TransitionState(BaseModel):
     """Runtime state tracking for the decoder.
 
     Attributes:
@@ -96,4 +96,4 @@ class DecoderState(BaseModel):
         type: Current expected parameter type.
     """
     state: States = Field(default=States.NAME)
-    type: Types = Field(default=Types.NULL)
+    parameter_key: tuple[str, Types] | None = Field(default=None)
