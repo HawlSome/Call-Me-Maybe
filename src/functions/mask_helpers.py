@@ -7,13 +7,14 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 23:51:12 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 21:12:24 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 from typing import Any
 import numpy as np
 import numpy.typing as npt
+
 
 def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
     from classes import Types, States
@@ -26,7 +27,7 @@ def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
         func_names = get_function_names(caller.func_definitions)
         allowed_options = np.array(
             sorted({
-                token for name in func_names 
+                token for name in func_names
                 for token in model.encode_to_int(name)
             }),
             dtype=np.int64

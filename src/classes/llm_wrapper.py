@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:31:12 by varandri            #+#    #+#            #
-#   Updated: 2026/10/06 00:04:08 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 21:13:57 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -58,4 +58,4 @@ class Llm(BaseModel):
         np_logits = np.array(logits, dtype=np.float32)
         masked_logits = np.full_like(np_logits, -np.inf)
         masked_logits[options] = np_logits[options]
-        return np.argmax(masked_logits)
+        return int(np.argmax(masked_logits))

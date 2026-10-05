@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 10:06:32 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 21:10:33 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -18,7 +18,7 @@ used to generate function calls from the provided prompts.
 """
 
 try:
-    from .functions import parse_args, get_function_names, get_function_parameters_keys, get_function_struct
+    from .functions import parse_args, get_function_parameters_keys
     from pydantic import ValidationError
     from json import JSONDecodeError
 except (ModuleNotFoundError, ImportError) as e:
