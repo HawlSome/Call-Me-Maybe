@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:51:21 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 10:17:44 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 23:22:26 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -34,4 +34,3 @@ class Types(Enum):
     INT = "integer"
     FLOAT = "float"
     BOOLEAN = "boolean"
-    NULL = ""
