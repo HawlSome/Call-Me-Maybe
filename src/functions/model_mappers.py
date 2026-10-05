@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:29:07 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 10:19:26 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 21:13:18 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -46,7 +46,7 @@ def get_function_struct(
 ) -> dict[str, Any] | None:
     for func in func_defs:
         if func.name == func_name:
-            return func.model_dump(exclude="model_config")
+            return func.model_dump()
     return None
 
 
