@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 11:07:14 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 11:21:35 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -55,7 +55,7 @@ class FunctionDefinition(BaseModel):
             for types in self.parameters.values():
                 if len(types.keys()) > 1 or not types.get("type"):
                     raise ValueError(
-                        "The format of returns in functions"
+                        "The format of parameters in functions"
                         " definition is invalid"
                     )
         return self
