@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:31:12 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 21:13:57 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 21:18:50 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -34,7 +34,7 @@ class Llm(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __get_logits(self, tokens: list[int]) -> list[float]:
-        return cast(list[float], self.model.get_logits_from_input(tokens))
+        return cast(list[float], self.model.get_logits_from_input_ids(tokens))
 
     def encode_to_int(self, string: str) -> list[int]:
         encoded_str: list[int] = []
