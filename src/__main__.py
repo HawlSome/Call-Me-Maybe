@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 11:07:38 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 11:54:00 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -18,7 +18,7 @@ used to generate function calls from the provided prompts.
 """
 
 try:
-    from .functions import parse_args
+    from .functions import parse_args, get_function_names
     from pydantic import ValidationError
     from json import JSONDecodeError
 except (ModuleNotFoundError, ImportError) as e:
@@ -39,9 +39,8 @@ def main() -> None:
         None. The decoded function calls are printed and persisted to disk.
     """
     prompts, fn_defs, output = parse_args()
-    print(prompts)
+    print(get_function_names(fn_defs))
     print()
-    print(fn_defs)
     # decoder = Decoder(
     #     function_definitions=fn_defs,
     #     function_callings=prompts
