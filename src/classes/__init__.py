@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:27:45 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 11:06:43 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 10:13:12 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -21,6 +21,7 @@ try:
     from .models import (
         FunctionCalling, FunctionDefinition
     )
+    from .enums import Types
     # from .decoder import Decoder
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
