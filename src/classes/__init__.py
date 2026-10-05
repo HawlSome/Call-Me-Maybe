@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   __init__.py                                          :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:27:45 by varandri            #+#    #+#            #
-#   Updated: 2026/09/30 13:41:08 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 11:06:43 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,10 +19,9 @@ project.
 
 try:
     from .models import (
-        FunctionParameters,
         FunctionCalling, FunctionDefinition
     )
-    from .decoder import Decoder
+    # from .decoder import Decoder
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     exit()
@@ -35,7 +34,6 @@ except (KeyboardInterrupt, EOFError) as e:
 
 
 __all__ = [
-    'FunctionParameters',
     'FunctionCalling', 'FunctionDefinition',
-    'Decoder'
+    # 'Decoder'
 ]

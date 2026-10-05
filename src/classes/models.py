@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   models.py                                            :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/02 06:48:11 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/05 11:07:14 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -32,32 +32,6 @@ except (KeyboardInterrupt, EOFError) as e:
     exit()
 
 
-class FunctionParameters(BaseModel):
-    """Definition of a single function parameter.
-
-    Attributes:
-        key: Name of the parameter.
-        value: Parameter schema metadata, including its expected type.
-    """
-
-    key: str = Field(...)
-    value: dict[str, str] = Field(...)
-    model_config = ConfigDict(extra="forbid")
-
-    @model_validator(mode="after")
-    def value_validator(self) -> "FunctionParameters":
-        """Validate the parameter schema."""
-        if not self.value:
-            raise ValueError(
-                "The format of parameters in functions definition is invalid"
-            )
-        if not self.value.get("type") and not self.value.get("TYPE"):
-            raise ValueError(
-                "The format of parameters in functions definition is invalid"
-            )
-        return self
-
-
 class FunctionDefinition(BaseModel):
     """Definition of a callable function.
 
@@ -70,9 +44,21 @@ class FunctionDefinition(BaseModel):
 
     name: str = Field(...)
     description: str = Field(...)
-    parameters: list[FunctionParameters] | None = Field(...)
+    parameters: dict[str, dict[str, str]] | None = Field(...)
     returns: dict[str, str] = Field(...)
     model_config = ConfigDict(extra="forbid")
+
+    @model_validator(mode="after")
+    def parameters_validator(self) -> "FunctionDefinition":
+        """Validate the function parameters schema."""
+        if self.parameters:
+            for types in self.parameters.values():
+                if len(types.keys()) > 1 or not types.get("type"):
+                    raise ValueError(
+                        "The format of returns in functions"
+                        " definition is invalid"
+                    )
+        return self
 
     @model_validator(mode="after")
     def returns_validator(self) -> "FunctionDefinition":
@@ -107,6 +93,5 @@ class DecoderState(BaseModel):
             extraction.
         type: Current expected parameter type.
     """
-
     state: States = Field(default=States.NAME)
     type: Types = Field(default=Types.NULL)
