@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/08 01:18:39 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/07 22:53:19 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -40,14 +40,11 @@ def main() -> None:
         None. The decoded function calls are printed and persisted to disk.
     """
     prompts, fn_defs, output = parse_args()
-    # print(get_function_parameters_keys(fn_defs, "fn_add_numbers"))
-    # print()
-    # # decoder = Decoder(
-    # #     function_definitions=fn_defs,
-    # #     function_callings=prompts
-    # # )
-    # # decoder.get_fun_calls(path_outdir=output)
-    caller: CallMeMaybe = CallMeMaybe()
+    print()
+    caller: CallMeMaybe = CallMeMaybe(
+        func_defs=fn_defs,
+        func_calls=prompts
+    )
     caller.call_functions()
 
 

@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 21:12:24 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/07 22:40:28 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -17,14 +17,14 @@ import numpy.typing as npt
 
 
 def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
-    from classes import Types, States
-    from functions import get_function_names
+    from ..classes import Types, States
+    from ..functions import get_function_names
 
     model = caller.model
     state = caller.transition_state.state
     allowed_options = np.array([], dtype=np.int64)
     if state == States.NAME:
-        func_names = get_function_names(caller.func_definitions)
+        func_names = get_function_names(caller.func_defs)
         allowed_options = np.array(
             sorted({
                 token for name in func_names
