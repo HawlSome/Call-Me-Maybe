@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:29:07 by varandri            #+#    #+#            #
-#   Updated: 2026/10/08 00:49:15 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/07 22:51:40 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -60,6 +60,7 @@ def get_function_defs_struct(
             for func_name in get_function_names(func_defs)
         ]
     )
+
 
 def get_function_parameters_keys(
     func_defs: list[FunctionDefinition], func_name: str

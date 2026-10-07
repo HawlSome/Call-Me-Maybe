@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:18:26 by varandri            #+#    #+#            #
-#   Updated: 2026/10/08 00:49:42 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/07 22:39:35 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -23,7 +23,7 @@ try:
         get_function_names, get_function_struct, get_function_defs_struct,
         get_function_parameters_keys
     )
-    from mask_helpers import get_options
+    from .mask_helpers import get_options
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     exit()
