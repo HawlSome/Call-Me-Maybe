@@ -7,12 +7,12 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:29:07 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 21:13:18 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/08 00:49:15 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 try:
-    from typing import Any
+    from typing import Any, cast
     from ..classes import FunctionDefinition
     from ..classes import Types
 except (ModuleNotFoundError, ImportError) as e:
@@ -49,6 +49,17 @@ def get_function_struct(
             return func.model_dump()
     return None
 
+
+def get_function_defs_struct(
+    func_defs: list[FunctionDefinition]
+) -> list[dict[str, Any]]:
+    return cast(
+        list[dict[str, Any]],
+        [
+            get_function_struct(func_defs, func_name)
+            for func_name in get_function_names(func_defs)
+        ]
+    )
 
 def get_function_parameters_keys(
     func_defs: list[FunctionDefinition], func_name: str

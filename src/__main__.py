@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 21:10:33 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/08 01:18:39 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,6 +19,7 @@ used to generate function calls from the provided prompts.
 
 try:
     from .functions import parse_args, get_function_parameters_keys
+    from .classes import CallMeMaybe
     from pydantic import ValidationError
     from json import JSONDecodeError
 except (ModuleNotFoundError, ImportError) as e:
@@ -39,13 +40,15 @@ def main() -> None:
         None. The decoded function calls are printed and persisted to disk.
     """
     prompts, fn_defs, output = parse_args()
-    print(get_function_parameters_keys(fn_defs, "fn_add_numbers"))
-    print()
-    # decoder = Decoder(
-    #     function_definitions=fn_defs,
-    #     function_callings=prompts
-    # )
-    # decoder.get_fun_calls(path_outdir=output)
+    # print(get_function_parameters_keys(fn_defs, "fn_add_numbers"))
+    # print()
+    # # decoder = Decoder(
+    # #     function_definitions=fn_defs,
+    # #     function_callings=prompts
+    # # )
+    # # decoder.get_fun_calls(path_outdir=output)
+    caller: CallMeMaybe = CallMeMaybe()
+    caller.call_functions()
 
 
 if __name__ == "__main__":

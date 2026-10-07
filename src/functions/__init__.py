@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:18:26 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 21:10:09 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/08 00:49:42 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -20,7 +20,7 @@ pipeline.
 try:
     from .parser import parse_args, store_JSON
     from .model_mappers import (
-        get_function_names, get_function_struct,
+        get_function_names, get_function_struct, get_function_defs_struct,
         get_function_parameters_keys
     )
     from mask_helpers import get_options
@@ -37,7 +37,7 @@ except (KeyboardInterrupt, EOFError) as e:
 
 __all__ = [
     'parse_args', 'store_JSON',
-    'get_function_names', 'get_function_struct',
+    'get_function_names', 'get_function_struct', 'get_function_defs_struct',
     'get_function_parameters_keys',
     'get_options'
 ]
