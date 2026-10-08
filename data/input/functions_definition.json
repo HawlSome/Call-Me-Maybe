@@ -3,8 +3,11 @@
     "name": "fn_add_numbers",
     "description": "Add two numbers together and return their sum.",
     "parameters": {
+      "is_decimal": {
+        "type": "boolean"
+      },
       "a": {
-        "type": "number"
+        "type": "float"
       },
       "b": {
         "type": "number"
