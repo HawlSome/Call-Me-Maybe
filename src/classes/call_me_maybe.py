@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/08 19:23:00 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/08 19:30:18 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -172,8 +172,12 @@ class CallMeMaybe(BaseModel):
         from ..functions import get_function_defs_struct, get_function_names
         func_defs_struct = get_function_defs_struct(self.func_defs)
         func_names = get_function_names(self.func_defs)
-        self.__call_name(
+        name = self.__call_name(
             call=self.func_calls[0].prompt,
             func_defs=func_defs_struct,
             func_names=func_names
+        )
+        self.__call_parameters(
+            call=self.func_calls[0].prompt,
+            func_name=name
         )
