@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/07 22:40:28 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/08 21:19:23 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -58,9 +58,6 @@ def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
             vocab_size = model.get_vocab_size()
             allowed: list[int] = []
             for token in range(vocab_size):
-                decoded_token = model.decode(token)
-                if len(decoded_token) > 1 and '"' in decoded_token:
-                    continue
                 allowed.append(token)
             allowed_options = np.array(allowed, dtype=np.int64)
     return allowed_options

@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/08 19:30:18 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/08 21:19:42 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -17,7 +17,7 @@ try:
     from pydantic import BaseModel, Field, ConfigDict
     from .models import FunctionCalling, FunctionDefinition, TransitionState
     from .llm_wrapper import Llm
-    from json import dumps
+    from json import dumps, loads
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     exit()
@@ -70,9 +70,10 @@ class CallMeMaybe(BaseModel):
             "in a given prompt. The function structure will also "
             "be given to you for you to take reference on.\n"
             'the value must follow json strucutre value.\n'
+            "A 'number' type value must be casted into a float.\n"
             f"Function structure: {func_struct}.\n"
             "{"
-            f'"prompt": "{call}", "name": '
+            f'"prompt": {dumps(call)}, "name":'
             f'"{func_name}", "parameters":'
         )
 
@@ -82,7 +83,7 @@ class CallMeMaybe(BaseModel):
     ) -> str:
         from ..functions import get_options
         self.__set_state()
-        print(f'Prompt: "{call}".')
+        print(f'Prompt: {dumps(call)}.')
         print("Function Name: ", end="", flush=True)
         model: Llm = self.model
         func_name = ""
@@ -105,11 +106,11 @@ class CallMeMaybe(BaseModel):
             func_name += decoded_token
             encoded_prompt.append(best_token)
         self.__set_state(States.PARAMS)
-        print("\n")
+        print()
         return dumps(func_name)
 
     def __get_current_parameter(self, encoded_prompt: list[int]) -> str:
-        from ..functions import get_options
+        from ..functions import get_options, parameter_ending
         transition_state: TransitionState = self.transition_state
         model: Llm = self.model
         parameter: str = ''
@@ -119,25 +120,46 @@ class CallMeMaybe(BaseModel):
             transition_state.parameter_key[1] in [Types.INT, Types.FLOAT]
         ):
             max_token = 10
+        if (
+            transition_state.parameter_key and
+            transition_state.parameter_key[1] == Types.STRING
+        ):
+            parameter = '"'
+            print('"', end="", flush=True)
         param_option = get_options(caller=self)
         while True:
             best_token = model.get_best_token(
                 prompt=encoded_prompt,
                 options=param_option
             )
-            decoded_token = model.decode([best_token])
+            decoded_token: str = model.decode([best_token])
             max_token -= 1
-            if (
-                max_token <= 0 or
-                (
-                    parameter.startswith('"') and
-                    parameter.endswith('"')
-                )
+            if transition_state.parameter_key and parameter_ending(
+                max_token, parameter, decoded_token,
+                transition_state.parameter_key[1]
             ):
+                if (
+                    transition_state.parameter_key and
+                    transition_state.parameter_key[1] == Types.STRING
+                ):
+                    decoded_token = decoded_token.split('"')[0] + '"'
+                    print(f'{decoded_token}', end="", flush=True)
+                    parameter += decoded_token
+                encoded_prompt.append(best_token)
                 break
             print(f'{decoded_token}', end="", flush=True)
             parameter += decoded_token
             encoded_prompt.append(best_token)
+        next = model.encode_to_int(', ')
+        encoded_prompt.extend(next)
+        if (
+            transition_state.parameter_key and
+            transition_state.parameter_key[1] == Types.FLOAT
+        ):
+            casted_parameter = str(float(parameter))
+            decimal = casted_parameter.replace(parameter, "")
+            print(decimal, end="", flush=True)
+            parameter = parameter.replace(parameter, casted_parameter)
         parameter += ', '
         print()
         return parameter
@@ -155,11 +177,14 @@ class CallMeMaybe(BaseModel):
         else:
             return "null"
         prompt: str = self.__get_prompt(call, func_name=func_name)
-        prompt += " {" + f'"{param_keys[0][0]}":'
-        encoded_prompt = model.encode_to_int(prompt)
+        prompt += "{"
         print('Parameters:')
         for k in param_keys:
             key = k[0]
+            prompt += f'"{key}":'
+            if k[1] == Types.STRING:
+                prompt += '"'
+            encoded_prompt = model.encode_to_int(prompt)
             print(f'\t{key}: ', end="", flush=True)
             self.__set_state(States.PARAMS, k)
             parameter = self.__get_current_parameter(encoded_prompt)
@@ -173,11 +198,12 @@ class CallMeMaybe(BaseModel):
         func_defs_struct = get_function_defs_struct(self.func_defs)
         func_names = get_function_names(self.func_defs)
         name = self.__call_name(
-            call=self.func_calls[0].prompt,
+            call=self.func_calls[2].prompt,
             func_defs=func_defs_struct,
             func_names=func_names
         )
-        self.__call_parameters(
-            call=self.func_calls[0].prompt,
-            func_name=name
+        parameters = self.__call_parameters(
+            call=self.func_calls[2].prompt,
+            func_name=loads(name)
         )
+        print(parameters)
