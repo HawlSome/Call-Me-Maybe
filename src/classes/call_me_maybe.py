@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 02:31:10 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 02:57:31 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -223,12 +223,12 @@ class CallMeMaybe(BaseModel):
                     call=call.prompt,
                     func_name=loads(name)
                 )
-                raw_answer = (
-                    '{"prompt":' + dumps(call.prompt) + ', ' +
-                    '"name":' + name + ', "parameters": {'
-                    + parameters + '}}'
-                )
-                calls.append(loads(raw_answer))
+                raw_answer = {
+                    "prompt": call.prompt,
+                    "name": loads(name),
+                    "parameters": loads("{" + parameters + "}")
+                }
+                calls.append(raw_answer)
                 store_JSON(calls, path_output=path_output)
             except JSONDecodeError as e:
                 print(
