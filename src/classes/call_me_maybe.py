@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 01:40:37 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 02:20:31 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -17,7 +17,7 @@ try:
     from pydantic import BaseModel, Field, ConfigDict
     from .models import FunctionCalling, FunctionDefinition, TransitionState
     from .llm_wrapper import Llm
-    from json import dumps, loads
+    from json import dumps, loads, JSONDecodeError
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     exit()
@@ -183,18 +183,16 @@ class CallMeMaybe(BaseModel):
         print()
         prompt: str = self.__get_prompt(call, func_name=func_name)
         prompt += "{"
+        prompt += f'"{param_keys[0][0]}":'
         encoded_prompt: list[int] = model.encode_to_int(prompt)
         for k in param_keys:
             key = k[0]
-            prompt_keys = [
-                token for ch in f'"{key}":'
-                for token in model.encode_to_int(ch)
-            ]
+            print(f'\t{key}: ', end="", flush=True)
+            prompt_keys = model.encode_to_int(f'"{key}":')
             encoded_prompt.extend(prompt_keys)
             if k[1] == Types.STRING:
                 encoded_prompt.extend(model.encode_to_int(' '))
                 encoded_prompt.extend(model.encode_to_int('"'))
-            print(f'\t{key}: ', end="", flush=True)
             self.__set_state(States.PARAMS, k)
             parameter = self.__get_current_parameter(encoded_prompt)
             func_parameters += f'"{key}": {parameter}'
@@ -202,26 +200,46 @@ class CallMeMaybe(BaseModel):
         print()
         return func_parameters
 
-    def call_functions(self) -> None:
-        from ..functions import get_function_defs_struct, get_function_names
+    def call_functions(
+        self, path_output: str = "data/output/function_calls.json"
+    ) -> None:
+        from ..functions import (
+            get_function_defs_struct, get_function_names, store_JSON
+        )
         func_defs_struct = get_function_defs_struct(self.func_defs)
         func_names = get_function_names(self.func_defs)
         calls: list[dict[str, Any]] = []
+        name: str = ""
+        store_JSON(calls, path_output=path_output)
         for call in self.func_calls:
-            name = self.__call_name(
-                call=call.prompt,
-                func_defs=func_defs_struct,
-                func_names=func_names
-            )
-            parameters = self.__call_parameters(
-                call=call.prompt,
-                func_name=loads(name)
-            )
-            raw_answer = (
-                '{"prompt":' + dumps(call.prompt) + ', ' +
-                '"name":' + name + ', "parameters": {'
-                + parameters + '}}'
-            )
-            print(raw_answer)
-            calls.append(loads(raw_answer))
-            print(calls[-1])
+            try:
+                name = self.__call_name(
+                    call=call.prompt,
+                    func_defs=func_defs_struct,
+                    func_names=func_names
+                )
+                if name.rstrip('"').lstrip('"') not in func_names:
+                    raise NameError
+                parameters = self.__call_parameters(
+                    call=call.prompt,
+                    func_name=loads(name)
+                )
+                raw_answer = (
+                    '{"prompt":' + dumps(call.prompt) + ', ' +
+                    '"name":' + name + ', "parameters": {'
+                    + parameters + '}}'
+                )
+                calls.append(loads(raw_answer))
+                store_JSON(calls, path_output=path_output)
+            except JSONDecodeError as e:
+                print(
+                    f"[ERROR] - {JSONDecodeError.__name__}: "
+                    f"the structure of '{name}' "
+                    f"is an invalid json. ({e})"
+                )
+            except NameError:
+                print(
+                    f"[ERROR] - {NameError.__name__}: "
+                    f"the function '{name}' "
+                    "doesn't exist in the function definitions."
+                )

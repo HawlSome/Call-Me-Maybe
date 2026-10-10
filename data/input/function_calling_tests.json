@@ -1,5 +1,8 @@
 [
 	{
+	  "prompt": "What is the sum of -265.33 and 345?"
+	},
+	{
 	  "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS"
 	},
 	{
@@ -7,9 +10,6 @@
 	},
   {
     "prompt": "What is the sum of 2 and 3?"
-  },
-  {
-    "prompt": "What is the sum of -265.33 and 345?"
   },
   {
     "prompt": "Greet John Jujust xoxoqsfcxvr"
