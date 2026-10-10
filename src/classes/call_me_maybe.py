@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 02:20:31 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 02:31:10 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -122,7 +122,6 @@ class CallMeMaybe(BaseModel):
         if (
             transition_state.parameter_key and
             transition_state.parameter_key[1] == Types.STRING
-            # transition_state.parameter_key[0] != "regex"
         ):
             parameter = '"'
             print('"', end="", flush=True)
