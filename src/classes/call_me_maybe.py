@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/08 21:19:42 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 01:40:37 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -69,11 +69,10 @@ class CallMeMaybe(BaseModel):
             "You will retrieve the parameters value of a function "
             "in a given prompt. The function structure will also "
             "be given to you for you to take reference on.\n"
-            'the value must follow json strucutre value.\n'
-            "A 'number' type value must be casted into a float.\n"
+            "the value must be a valid JSON value"
             f"Function structure: {func_struct}.\n"
             "{"
-            f'"prompt": {dumps(call)}, "name":'
+            f'"prompt": {dumps(call)}, "name": '
             f'"{func_name}", "parameters":'
         )
 
@@ -123,6 +122,7 @@ class CallMeMaybe(BaseModel):
         if (
             transition_state.parameter_key and
             transition_state.parameter_key[1] == Types.STRING
+            # transition_state.parameter_key[0] != "regex"
         ):
             parameter = '"'
             print('"', end="", flush=True)
@@ -145,12 +145,14 @@ class CallMeMaybe(BaseModel):
                     decoded_token = decoded_token.split('"')[0] + '"'
                     print(f'{decoded_token}', end="", flush=True)
                     parameter += decoded_token
-                encoded_prompt.append(best_token)
+                encoded_prompt.extend(model.encode_to_int(decoded_token))
                 break
             print(f'{decoded_token}', end="", flush=True)
             parameter += decoded_token
             encoded_prompt.append(best_token)
-        next = model.encode_to_int(', ')
+        next = [
+            token for ch in ", "
+            for token in model.encode_to_int(ch)]
         encoded_prompt.extend(next)
         if (
             transition_state.parameter_key and
@@ -172,19 +174,26 @@ class CallMeMaybe(BaseModel):
             func_defs=self.func_defs,
             func_name=func_name
         )
+        print('Parameters:', end="", flush=True)
         if param_keys:
             self.__set_state(States.PARAMS, param_keys[0])
         else:
+            print(' null')
             return "null"
+        print()
         prompt: str = self.__get_prompt(call, func_name=func_name)
         prompt += "{"
-        print('Parameters:')
+        encoded_prompt: list[int] = model.encode_to_int(prompt)
         for k in param_keys:
             key = k[0]
-            prompt += f'"{key}":'
+            prompt_keys = [
+                token for ch in f'"{key}":'
+                for token in model.encode_to_int(ch)
+            ]
+            encoded_prompt.extend(prompt_keys)
             if k[1] == Types.STRING:
-                prompt += '"'
-            encoded_prompt = model.encode_to_int(prompt)
+                encoded_prompt.extend(model.encode_to_int(' '))
+                encoded_prompt.extend(model.encode_to_int('"'))
             print(f'\t{key}: ', end="", flush=True)
             self.__set_state(States.PARAMS, k)
             parameter = self.__get_current_parameter(encoded_prompt)
@@ -197,13 +206,22 @@ class CallMeMaybe(BaseModel):
         from ..functions import get_function_defs_struct, get_function_names
         func_defs_struct = get_function_defs_struct(self.func_defs)
         func_names = get_function_names(self.func_defs)
-        name = self.__call_name(
-            call=self.func_calls[2].prompt,
-            func_defs=func_defs_struct,
-            func_names=func_names
-        )
-        parameters = self.__call_parameters(
-            call=self.func_calls[2].prompt,
-            func_name=loads(name)
-        )
-        print(parameters)
+        calls: list[dict[str, Any]] = []
+        for call in self.func_calls:
+            name = self.__call_name(
+                call=call.prompt,
+                func_defs=func_defs_struct,
+                func_names=func_names
+            )
+            parameters = self.__call_parameters(
+                call=call.prompt,
+                func_name=loads(name)
+            )
+            raw_answer = (
+                '{"prompt":' + dumps(call.prompt) + ', ' +
+                '"name":' + name + ', "parameters": {'
+                + parameters + '}}'
+            )
+            print(raw_answer)
+            calls.append(loads(raw_answer))
+            print(calls[-1])

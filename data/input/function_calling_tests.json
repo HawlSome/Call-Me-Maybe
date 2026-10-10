@@ -1,4 +1,10 @@
 [
+	{
+	  "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS"
+	},
+	{
+	  "prompt": "Replace all vowels in 'Programming \\t is fun' with asterisks"
+	},
   {
     "prompt": "What is the sum of 2 and 3?"
   },
@@ -22,12 +28,6 @@
   },
   {
     "prompt": "Calculate the square root of 144"
-  },
-  {
-    "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS"
-  },
-  {
-    "prompt": "Replace all vowels in 'Programming \\t is fun' with asterisks"
   },
   {
     "prompt": "Substitute the word 'cat' with 'dog' in 'The cat sat on the mat with another cat'"
