@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/10/07 22:39:46 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 01:56:58 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -135,14 +135,14 @@ def parse_args() -> tuple[
     return (prompts, definitions, output_file)
 
 
-def store_JSON(json_content: list[dict[str, Any]], path_outdir: str) -> None:
+def store_JSON(json_content: list[dict[str, Any]], path_output: str) -> None:
     """Write JSON content to the output path.
 
     Args:
         json_content: Data to serialize.
-        path_outdir: Output file path.
+        path_output: Output file path.
     """
-    path: Path = Path(path_outdir)
+    path: Path = Path(path_output)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open(mode="w") as file:
         dump(json_content, file, indent=4)

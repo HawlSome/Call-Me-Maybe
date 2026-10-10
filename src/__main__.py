@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/07 22:53:19 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 02:27:08 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -18,7 +18,7 @@ used to generate function calls from the provided prompts.
 """
 
 try:
-    from .functions import parse_args, get_function_parameters_keys
+    from .functions import parse_args
     from .classes import CallMeMaybe
     from pydantic import ValidationError
     from json import JSONDecodeError
@@ -45,7 +45,7 @@ def main() -> None:
         func_defs=fn_defs,
         func_calls=prompts
     )
-    caller.call_functions()
+    caller.call_functions(path_output=output)
 
 
 if __name__ == "__main__":
