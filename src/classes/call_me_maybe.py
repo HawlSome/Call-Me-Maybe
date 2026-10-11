@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 02:57:31 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 11:10:39 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -149,10 +149,6 @@ class CallMeMaybe(BaseModel):
             print(f'{decoded_token}', end="", flush=True)
             parameter += decoded_token
             encoded_prompt.append(best_token)
-        next = [
-            token for ch in ", "
-            for token in model.encode_to_int(ch)]
-        encoded_prompt.extend(next)
         if (
             transition_state.parameter_key and
             transition_state.parameter_key[1] == Types.FLOAT
@@ -184,14 +180,16 @@ class CallMeMaybe(BaseModel):
         prompt += "{"
         prompt += f'"{param_keys[0][0]}":'
         encoded_prompt: list[int] = model.encode_to_int(prompt)
-        for k in param_keys:
+        for i in range(len(param_keys)):
+            k = param_keys[i]
             key = k[0]
             print(f'\t{key}: ', end="", flush=True)
-            prompt_keys = model.encode_to_int(f'"{key}":')
-            encoded_prompt.extend(prompt_keys)
+            if i > 0 and k[1] != Types.STRING:
+                prompt_keys = model.encode_to_int(f', "{key}":')
+                encoded_prompt.extend(prompt_keys)
             if k[1] == Types.STRING:
-                encoded_prompt.extend(model.encode_to_int(' '))
-                encoded_prompt.extend(model.encode_to_int('"'))
+                prompt_keys = model.encode_to_int(f', "{key}":"')
+                encoded_prompt.extend(prompt_keys)
             self.__set_state(States.PARAMS, k)
             parameter = self.__get_current_parameter(encoded_prompt)
             func_parameters += f'"{key}": {parameter}'
