@@ -6,7 +6,7 @@
 #    By: varandri <varandri@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/14 10:11:34 by varandri          #+#    #+#              #
-#    Updated: 2026/10/08 21:23:04 by varandri         ###   ########.fr        #
+#    Updated: 2026/10/11 21:03:52 by varandri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,6 @@ run: install
 	--output data/output/function_calls.json
 
 install:
-# 	@pip install uv
 	@mkdir -p $(DIR)
 	@uv sync
 

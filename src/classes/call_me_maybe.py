@@ -11,6 +11,8 @@
 #                                                                             #
 # ########################################################################### #
 
+"""Select functions and generate their arguments with a language model."""
+
 try:
     from typing import Any
     from .enums import States, Types
@@ -30,6 +32,15 @@ except (KeyboardInterrupt, EOFError) as e:
 
 
 class CallMeMaybe(BaseModel):
+    """Coordinate function selection and argument generation.
+
+    Attributes:
+        func_defs: Function definitions available for selection.
+        func_calls: Prompts to resolve into function calls.
+        model: Language model used to generate function names and arguments.
+        transition_state: Current function-selection or parameter state.
+    """
+
     func_defs: list[FunctionDefinition] = Field(default=...)
     func_calls: list[FunctionCalling] = Field(default=...)
     model: Llm = Field(default=Llm())
@@ -40,6 +51,12 @@ class CallMeMaybe(BaseModel):
         self, state: States = States.NAME,
         param_keys: tuple[str, Types] | None = None
     ) -> None:
+        """Set the current generation state and optional parameter key.
+
+        Args:
+            state: Generation stage to activate.
+            param_keys: Parameter name and type to track, if applicable.
+        """
         transition_state: TransitionState = self.transition_state
         transition_state.state = state
         transition_state.parameter_key = param_keys
@@ -48,6 +65,16 @@ class CallMeMaybe(BaseModel):
         self, call: str, func_defs: list[dict[str, Any]] = [],
         func_name: str = ""
     ) -> str:
+        """Build a prompt for selecting a function or retrieving arguments.
+
+        Args:
+            call: User prompt describing the requested function call.
+            func_defs: Function definitions available for selection.
+            func_name: Selected function whose arguments are being retrieved.
+
+        Returns:
+            The prompt text sent to the language model.
+        """
         from ..functions import get_function_struct
         transition_state: TransitionState = self.transition_state
         if transition_state.state == States.NAME:
@@ -80,6 +107,16 @@ class CallMeMaybe(BaseModel):
         self, call: str, func_defs: list[dict[str, Any]],
         func_names: list[str]
     ) -> str:
+        """Generate the function name selected for a prompt.
+
+        Args:
+            call: User prompt describing the requested function call.
+            func_defs: Function definitions supplied to the model.
+            func_names: Valid function names used to constrain selection.
+
+        Returns:
+            The selected function name encoded as a JSON string.
+        """
         from ..functions import get_options
         self.__set_state()
         print(f'Prompt: {dumps(call)}.')
@@ -109,6 +146,14 @@ class CallMeMaybe(BaseModel):
         return dumps(func_name)
 
     def __get_current_parameter(self, encoded_prompt: list[int]) -> str:
+        """Generate the value for the current parameter.
+
+        Args:
+            encoded_prompt: Tokenized prompt extended as values are generated.
+
+        Returns:
+            The generated parameter value followed by a comma and space.
+        """
         from ..functions import get_options, parameter_ending
         transition_state: TransitionState = self.transition_state
         model: Llm = self.model
@@ -162,6 +207,15 @@ class CallMeMaybe(BaseModel):
         return parameter
 
     def __call_parameters(self, call: str, func_name: str) -> str:
+        """Generate JSON fields for the selected function's parameters.
+
+        Args:
+            call: User prompt describing the requested function call.
+            func_name: Name of the selected function.
+
+        Returns:
+            The generated parameter fields, or ``"null"`` if there are none.
+        """
         from ..functions import get_function_parameters_keys
         model: Llm = self.model
         func_parameters: str = ""
@@ -200,6 +254,11 @@ class CallMeMaybe(BaseModel):
     def call_functions(
         self, path_output: str = "data/output/function_calls.json"
     ) -> None:
+        """Resolve configured prompts and save their function calls.
+
+        Args:
+            path_output: Destination path for the generated function calls.
+        """
         from ..functions import (
             get_function_defs_struct, get_function_names, store_JSON
         )

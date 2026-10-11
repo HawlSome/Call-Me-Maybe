@@ -11,6 +11,8 @@
 #                                                                             #
 # ########################################################################### #
 
+"""Helper functions for decoding generated function parameters."""
+
 from ..classes import Types
 
 
@@ -18,6 +20,17 @@ def parameter_ending(
     max_token: int, parameter: str,
     decoded_token: str, k_type: Types
 ) -> bool:
+    """Determine whether the current parameter value is complete.
+
+    Args:
+        max_token: Remaining token limit for generating the value.
+        parameter: Value text generated so far.
+        decoded_token: Next decoded token to consider.
+        k_type: Expected type of the parameter.
+
+    Returns:
+        Whether generation should stop for the current parameter.
+    """
     next_word = parameter + decoded_token
     return (
         max_token <= 0 or

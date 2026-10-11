@@ -34,11 +34,7 @@ except (KeyboardInterrupt, EOFError) as e:
 
 
 def main() -> None:
-    """Run the command-line application.
-
-    Returns:
-        None. The decoded function calls are printed and persisted to disk.
-    """
+    """Run the CLI application and save the decoded function calls."""
     prompts, fn_defs, output = parse_args()
     print()
     caller: CallMeMaybe = CallMeMaybe(

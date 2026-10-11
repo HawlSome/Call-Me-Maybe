@@ -7,9 +7,11 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/08 21:19:23 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 21:15:31 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
+"""Build token masks for function names and parameter values."""
 
 from typing import Any
 import numpy as np
@@ -17,6 +19,15 @@ import numpy.typing as npt
 
 
 def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
+    """Get the token IDs allowed in the caller's current decoding state.
+
+    Args:
+        caller: Decoder object providing the model, function definitions,
+            and current transition state.
+
+    Returns:
+        An array of allowed token IDs, or ``None`` if no parameter is active.
+    """
     from ..classes import Types, States
     from ..functions import get_function_names
 

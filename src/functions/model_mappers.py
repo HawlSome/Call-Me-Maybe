@@ -7,9 +7,11 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:29:07 by varandri            #+#    #+#            #
-#   Updated: 2026/10/08 14:20:00 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 21:14:53 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
+"""Map function definitions to names, structures, and parameter metadata."""
 
 try:
     from typing import Any, cast
@@ -29,6 +31,16 @@ except (KeyboardInterrupt, EOFError) as e:
 def __get_function_parameters(
     func_defs: list[FunctionDefinition], func_name: str
 ) -> dict[str, dict[str, str]] | None:
+    """Find the parameter schema for a function by name.
+
+    Args:
+        func_defs: Function definitions to search.
+        func_name: Name of the function to find.
+
+    Returns:
+        The function's parameter schema, or ``None`` if it has no parameters
+        or is not found.
+    """
     for func in func_defs:
         if func.name == func_name:
             return func.parameters
@@ -36,6 +48,14 @@ def __get_function_parameters(
 
 
 def get_function_names(func_defs: list[FunctionDefinition]) -> list[str]:
+    """Get the names of the supplied function definitions.
+
+    Args:
+        func_defs: Function definitions whose names should be returned.
+
+    Returns:
+        Function names in definition order.
+    """
     return [
         func.name for func in func_defs
     ]
@@ -44,6 +64,15 @@ def get_function_names(func_defs: list[FunctionDefinition]) -> list[str]:
 def get_function_struct(
         func_defs: list[FunctionDefinition], func_name: str
 ) -> dict[str, Any] | None:
+    """Get the serialized structure of a function definition.
+
+    Args:
+        func_defs: Function definitions to search.
+        func_name: Name of the function to serialize.
+
+    Returns:
+        The function definition as a dictionary, or ``None`` if not found.
+    """
     for func in func_defs:
         if func.name == func_name:
             return func.model_dump()
@@ -53,6 +82,14 @@ def get_function_struct(
 def get_function_defs_struct(
     func_defs: list[FunctionDefinition]
 ) -> list[dict[str, Any]]:
+    """Serialize all supplied function definitions.
+
+    Args:
+        func_defs: Function definitions to serialize.
+
+    Returns:
+        Serialized definitions in input order.
+    """
     return cast(
         list[dict[str, Any]],
         [
@@ -65,6 +102,16 @@ def get_function_defs_struct(
 def get_function_parameters_keys(
     func_defs: list[FunctionDefinition], func_name: str
 ) -> list[tuple[str, Types]] | None:
+    """Get parameter names paired with their decoder types.
+
+    Args:
+        func_defs: Function definitions to search.
+        func_name: Name of the function whose parameters are requested.
+
+    Returns:
+        Parameter name and type pairs, or ``None`` if there are no parameters
+        or the function is not found.
+    """
     func_parameters = __get_function_parameters(func_defs, func_name)
     function_keys: list[tuple[str, Types]] = []
     if not func_parameters:
