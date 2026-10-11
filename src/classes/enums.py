@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/19 19:51:21 by varandri            #+#    #+#            #
-#   Updated: 2026/10/05 23:22:26 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 21:14:41 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -21,14 +21,26 @@ from enum import Enum
 
 
 class States(Enum):
-    """Runtime states used during decoding."""
+    """Stages of function-call decoding.
+
+    Attributes:
+        NAME: The decoder is selecting a function name.
+        PARAMS: The decoder is retrieving function parameters.
+    """
 
     NAME = "name"
     PARAMS = "params"
 
 
 class Types(Enum):
-    """Supported parameter types for decoded values."""
+    """Parameter value types supported by the decoder.
+
+    Attributes:
+        STRING: A string parameter.
+        INT: An integer parameter.
+        FLOAT: A floating-point parameter.
+        BOOLEAN: A boolean parameter.
+    """
 
     STRING = "string"
     INT = "integer"

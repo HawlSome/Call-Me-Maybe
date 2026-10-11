@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/10 13:27:11 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/11 21:11:49 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -50,7 +50,14 @@ class FunctionDefinition(BaseModel):
 
     @model_validator(mode="after")
     def parameters_validator(self) -> "FunctionDefinition":
-        """Validate the function parameters schema."""
+        """Validate and normalize the function parameter schema.
+
+        Returns:
+            The validated function definition.
+
+        Raises:
+            ValueError: If a parameter definition has an invalid format.
+        """
         if self.parameters:
             for types in self.parameters.values():
                 if len(types.keys()) > 1 or not types.get("type"):
@@ -64,7 +71,14 @@ class FunctionDefinition(BaseModel):
 
     @model_validator(mode="after")
     def returns_validator(self) -> "FunctionDefinition":
-        """Validate the function return schema."""
+        """Validate the function return schema.
+
+        Returns:
+            The validated function definition.
+
+        Raises:
+            ValueError: If the return definition is empty or has no type.
+        """
         if not len(self.returns.keys()):
             raise ValueError(
                 "The format of returns in functions definition is invalid"
@@ -82,7 +96,6 @@ class FunctionCalling(BaseModel):
     Attributes:
         prompt: User prompt to be translated into a function call.
     """
-
     prompt: str = Field(...)
     model_config = ConfigDict(extra="forbid")
 
@@ -93,7 +106,7 @@ class TransitionState(BaseModel):
     Attributes:
         state: Active decoding stage, such as name selection or parameter
             extraction.
-        type: Current expected parameter type.
+        parameter_key: Current parameter name and expected type, if any.
     """
     state: States = Field(default=States.NAME)
     parameter_key: tuple[str, Types] | None = Field(default=None)
