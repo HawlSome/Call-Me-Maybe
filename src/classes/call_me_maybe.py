@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   call_me_maybe.py                                     :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 11:10:39 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 14:36:58 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -119,7 +119,7 @@ class CallMeMaybe(BaseModel):
         """
         from ..functions import get_options
         self.__set_state()
-        print(f'Prompt: {dumps(call)}.')
+        print(f'Prompt: {dumps(call)}')
         print("Function Name: ", end="", flush=True)
         model: Llm = self.model
         func_name = ""
@@ -182,10 +182,7 @@ class CallMeMaybe(BaseModel):
                 max_token, parameter, decoded_token,
                 transition_state.parameter_key[1]
             ):
-                if (
-                    transition_state.parameter_key and
-                    transition_state.parameter_key[1] == Types.STRING
-                ):
+                if transition_state.parameter_key[1] == Types.STRING:
                     decoded_token = decoded_token.split('"')[0] + '"'
                     print(f'{decoded_token}', end="", flush=True)
                     parameter += decoded_token
@@ -227,7 +224,7 @@ class CallMeMaybe(BaseModel):
         if param_keys:
             self.__set_state(States.PARAMS, param_keys[0])
         else:
-            print(' null')
+            print(' null\n')
             return "null"
         print()
         prompt: str = self.__get_prompt(call, func_name=func_name)
@@ -249,7 +246,7 @@ class CallMeMaybe(BaseModel):
             func_parameters += f'"{key}": {parameter}'
         func_parameters = func_parameters.rstrip(', ')
         print()
-        return func_parameters
+        return '{' + func_parameters + '}'
 
     def call_functions(
         self, path_output: str = "data/output/function_calls.json"
@@ -283,7 +280,7 @@ class CallMeMaybe(BaseModel):
                 raw_answer = {
                     "prompt": call.prompt,
                     "name": loads(name),
-                    "parameters": loads("{" + parameters + "}")
+                    "parameters": loads(parameters)
                 }
                 calls.append(raw_answer)
                 store_JSON(calls, path_output=path_output)
