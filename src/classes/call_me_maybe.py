@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 19:22:59 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 20:02:14 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -188,7 +188,7 @@ class CallMeMaybe(BaseModel):
                     decoded_token = decoded_token.split('"')[0] + '"'
                     print(f'{decoded_token}', end="", flush=True)
                     parameter += decoded_token
-                encoded_prompt.extend(model.encode_to_int(decoded_token))
+                    encoded_prompt.extend(model.encode_to_int(decoded_token))
                 break
             print(f'{decoded_token}', end="", flush=True)
             parameter += decoded_token
@@ -252,7 +252,7 @@ class CallMeMaybe(BaseModel):
         return '{' + func_parameters + '}'
 
     def call_functions(
-        self, path_output: str = "data/output/function_calls.json"
+        self, path_output: str = "data/output/function_calling_results.json"
     ) -> None:
         """Resolve configured prompts and save their function calls.
 

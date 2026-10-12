@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 18:24:14 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 20:07:04 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -65,7 +65,7 @@ def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
                 }),
                 dtype=np.int64
             )
-        elif k_type == Types.STRING:
+        else:
             vocab_size = model.get_vocab_size()
             allowed: list[int] = []
             for token in range(vocab_size):

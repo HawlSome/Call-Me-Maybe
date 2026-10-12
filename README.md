@@ -78,7 +78,7 @@ Defaults:
 |---|---|
 | `--functions_definition` | `data/input/functions_definition.json` |
 | `--input` | `data/input/function_calling_tests.json` |
-| `--output` | `data/output/function_calls.json` |
+| `--output` | `data/output/function_calling_results.json` |
 
 The output directory is created automatically if it does not exist.
 
@@ -103,7 +103,7 @@ uv run python -m src
 uv run python -m src \
     --functions_definition data/input/functions_definition.json \
     --input data/input/function_calling_tests.json \
-    --output data/output/function_calls.json
+    --output data/output/function_calling_results.json
 ```
 
 Example `functions_definition.json` entry:

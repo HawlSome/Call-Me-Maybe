@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 19:26:20 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 19:54:33 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -56,7 +56,7 @@ def __parse() -> tuple[str, ...]:
     )
     parser.add_argument(
         "--output",
-        default="data/output/function_calls.json"
+        default="data/output/function_calling_results.json"
     )
     args = parser.parse_args()
     return (args.functions_definition, args.input, args.output)

@@ -6,7 +6,7 @@
 #    By: varandri <varandri@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/14 10:11:34 by varandri          #+#    #+#              #
-#    Updated: 2026/10/11 21:03:52 by varandri         ###   ########.fr        #
+#    Updated: 2026/10/12 19:54:33 by varandri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ run: install
 	@uv run python -m src \
 	--functions_definition data/input/functions_definition.json \
 	--input data/input/function_calling_tests.json \
-	--output data/output/function_calls.json
+	--output data/output/function_calling_results.json
 
 install:
 	@mkdir -p $(DIR)
@@ -33,7 +33,7 @@ debug: install
 	@uv run python -m pdb -m src \
 	--functions_definition data/input/functions_definition.json \
 	--input data/input/function_calling_tests.json \
-	--output data/output/function_calls.json
+	--output data/output/function_calling_results.json
 
 clean:
 	@find . -type d -name "*cache*" | xargs rm -rf
