@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 20:07:04 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 20:57:46 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -18,7 +18,9 @@ import numpy as np
 import numpy.typing as npt
 
 
-def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
+def get_options(
+    *, caller: Any, found_name: str = ""
+) -> npt.NDArray[np.int64] | None:
     """Get the token IDs allowed in the caller's current decoding state.
 
     Args:
@@ -39,7 +41,9 @@ def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
         allowed_options = np.array(
             sorted({
                 token for name in func_names
-                for token in model.encode_to_int(name)
+                if name.startswith(found_name) and
+                len(found_name) < len(name)
+                for token in model.encode_to_int(name[len(found_name):])
             }),
             dtype=np.int64
         )

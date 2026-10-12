@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 20:02:14 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 21:05:38 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -126,10 +126,10 @@ class CallMeMaybe(BaseModel):
         model: Llm = self.model
         func_name = ""
         max_token = 20
-        name_options = get_options(caller=self)
         prompt = self.__get_prompt(call, func_defs)
         encoded_prompt = model.encode_to_int(prompt)
         while True:
+            name_options = get_options(caller=self, found_name=func_name)
             if (
                 max_token <= 0 or
                 func_name in func_names
