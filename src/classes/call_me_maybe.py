@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 19:02:35 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 19:22:59 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -267,8 +267,10 @@ class CallMeMaybe(BaseModel):
         calls: list[dict[str, Any]] = []
         name: str = ""
         store_JSON(calls, path_output=path_output)
+        raw_answer: str = ""
         for call in self.func_calls:
             try:
+                raw_answer = '{"prompt":' + dumps(call.prompt)
                 name = self.__call_name(
                     call=call.prompt,
                     func_defs=func_defs_struct,
@@ -276,16 +278,13 @@ class CallMeMaybe(BaseModel):
                 )
                 if name.rstrip('"').lstrip('"') not in func_names:
                     raise NameError
+                raw_answer += ', "name":' + name
                 parameters = self.__call_parameters(
                     call=call.prompt,
                     func_name=loads(name)
                 )
-                raw_answer = {
-                    "prompt": call.prompt,
-                    "name": loads(name),
-                    "parameters": loads(parameters)
-                }
-                calls.append(raw_answer)
+                raw_answer += ', "parameters":' + parameters + '}'
+                calls.append(loads(raw_answer))
                 store_JSON(calls, path_output=path_output)
             except JSONDecodeError as e:
                 print(
