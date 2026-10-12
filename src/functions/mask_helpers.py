@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   mask_helpers.py                                      :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 21:15:31 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 18:24:14 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -48,7 +48,7 @@ def get_options(*, caller: Any) -> npt.NDArray[np.int64] | None:
             return None
         _, k_type = caller.transition_state.parameter_key
         if k_type in {Types.INT, Types.FLOAT}:
-            number_str = '-".,0123456789'
+            number_str = '-.,0123456789'
             allowed_options = np.array(
                 sorted({
                     token for ch in number_str

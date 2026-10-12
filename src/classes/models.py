@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   models.py                                            :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 21:11:49 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 18:48:36 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -42,11 +42,28 @@ class FunctionDefinition(BaseModel):
         returns: Return schema describing the output value.
     """
 
-    name: str = Field(...)
+    name: str = Field(..., min_length=3)
     description: str = Field(...)
     parameters: dict[str, dict[str, str]] | None = Field(...)
     returns: dict[str, str] = Field(...)
     model_config = ConfigDict(extra="forbid")
+
+    @model_validator(mode="after")
+    def name_validator(self) -> "FunctionDefinition":
+        """Validate and normalize the function parameter schema.
+
+        Returns:
+            The validated function definition.
+
+        Raises:
+            ValueError: If a parameter definition has an invalid format.
+        """
+        if not self.name.strip():
+            raise ValueError(
+                "name: The format of parameters in functions"
+                " definition is invalid"
+            )
+        return self
 
     @model_validator(mode="after")
     def parameters_validator(self) -> "FunctionDefinition":
@@ -62,7 +79,7 @@ class FunctionDefinition(BaseModel):
             for types in self.parameters.values():
                 if len(types.keys()) > 1 or not types.get("type"):
                     raise ValueError(
-                        "The format of parameters in functions"
+                        "parameters: The format of parameters in functions"
                         " definition is invalid"
                     )
         else:
@@ -81,11 +98,13 @@ class FunctionDefinition(BaseModel):
         """
         if not len(self.returns.keys()):
             raise ValueError(
-                "The format of returns in functions definition is invalid"
+                "returns: The format of returns in "
+                "functions definition is invalid"
             )
         if not self.returns.get("type") and not self.returns.get("TYPE"):
             raise ValueError(
-                "The format of returns in functions definition is invalid"
+                "returns: The format of returns in functions"
+                " definition is invalid"
             )
         return self
 
@@ -96,8 +115,25 @@ class FunctionCalling(BaseModel):
     Attributes:
         prompt: User prompt to be translated into a function call.
     """
-    prompt: str = Field(...)
+    prompt: str = Field(..., min_length=5)
     model_config = ConfigDict(extra="forbid")
+
+    @model_validator(mode="after")
+    def prompt_validator(self) -> "FunctionCalling":
+        """Validate and normalize the function parameter schema.
+
+        Returns:
+            The validated function definition.
+
+        Raises:
+            ValueError: If a parameter definition has an invalid format.
+        """
+        if not self.prompt.strip():
+            raise ValueError(
+                "prompt: The format of parameters in functions"
+                " definition is invalid"
+            )
+        return self
 
 
 class TransitionState(BaseModel):

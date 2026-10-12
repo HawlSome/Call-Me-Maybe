@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   __main__.py                                          :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 02:27:08 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 18:34:53 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -73,8 +73,12 @@ if __name__ == "__main__":
     except ValidationError as e:
         print(f"\n[ERROR] - {e.__class__.__name__}:")
         for error in e.errors():
+            loc: str | None = error.get("loc")
             msg: str | None = error.get("msg")
-            print(f"- {msg}")
+            if loc:
+                print(f"- {loc[0]}: {msg}")
+            else:
+                print(f"- {msg}")
     except (ModuleNotFoundError, ImportError) as e:
         print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     except (ValueError, TypeError) as e:

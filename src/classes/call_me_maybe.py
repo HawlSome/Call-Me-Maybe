@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 14:36:58 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 19:02:35 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -96,7 +96,9 @@ class CallMeMaybe(BaseModel):
             "You will retrieve the parameters value of a function "
             "in a given prompt. The function structure will also "
             "be given to you for you to take reference on.\n"
-            "the value must be a valid JSON value"
+            "the value must be a valid JSON value."
+            "For a numeric value ,number starting with 0, 0 is skipped.\n"
+            "Example: 02 is 2 002 is 2 , 09 is 9 and so on.\n"
             f"Function structure: {func_struct}.\n"
             "{"
             f'"prompt": {dumps(call)}, "name": '
@@ -196,8 +198,7 @@ class CallMeMaybe(BaseModel):
             transition_state.parameter_key[1] == Types.FLOAT
         ):
             casted_parameter = str(float(parameter))
-            decimal = casted_parameter.replace(parameter, "")
-            print(decimal, end="", flush=True)
+            print(".0", end="", flush=True)
             parameter = parameter.replace(parameter, casted_parameter)
         parameter += ', '
         print()
@@ -230,18 +231,20 @@ class CallMeMaybe(BaseModel):
         prompt: str = self.__get_prompt(call, func_name=func_name)
         prompt += "{"
         prompt += f'"{param_keys[0][0]}":'
+        if param_keys[0][1] == Types.STRING:
+            prompt += '"'
         encoded_prompt: list[int] = model.encode_to_int(prompt)
         for i in range(len(param_keys)):
             k = param_keys[i]
             key = k[0]
             print(f'\t{key}: ', end="", flush=True)
+            self.__set_state(States.PARAMS, k)
             if i > 0 and k[1] != Types.STRING:
                 prompt_keys = model.encode_to_int(f', "{key}":')
                 encoded_prompt.extend(prompt_keys)
-            if k[1] == Types.STRING:
+            if i > 0 and k[1] == Types.STRING:
                 prompt_keys = model.encode_to_int(f', "{key}":"')
                 encoded_prompt.extend(prompt_keys)
-            self.__set_state(States.PARAMS, k)
             parameter = self.__get_current_parameter(encoded_prompt)
             func_parameters += f'"{key}": {parameter}'
         func_parameters = func_parameters.rstrip(', ')

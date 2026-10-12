@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   parser.py                                            :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 01:56:58 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 18:43:49 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -23,7 +23,7 @@ try:
     from json import load
     from json import dump
     from pathlib import Path
-
+    from pydantic import ValidationError
     from ..classes import (
         FunctionCalling, FunctionDefinition
     )
@@ -93,9 +93,20 @@ def __store_function_callings(raw_promts: Any) -> list[FunctionCalling]:
     """
     prompts: list[FunctionCalling] = []
     for p in raw_promts:
-        prompts.append(
-            FunctionCalling.model_validate(p)
-        )
+        try:
+            prompts.append(
+                FunctionCalling.model_validate(p)
+            )
+        except ValidationError as e:
+            print(f"\n[ERROR] - {e.__class__.__name__}:")
+            for error in e.errors():
+                loc: str | None = error.get("loc")
+                msg: str | None = error.get("msg")
+                if loc:
+                    print(f"- {loc[0]}: {msg}")
+                else:
+                    print(f"- {msg}")
+                continue
     return prompts
 
 
@@ -111,9 +122,20 @@ def __srote_function_defs(raw_fd: Any) -> list[FunctionDefinition]:
     definitions: list[FunctionDefinition] = []
 
     for fd in raw_fd:
-        definitions.append(
-            FunctionDefinition.model_validate(fd)
-        )
+        try:
+            definitions.append(
+                FunctionDefinition.model_validate(fd)
+            )
+        except ValidationError as e:
+            print(f"\n[ERROR] - {e.__class__.__name__}:")
+            for error in e.errors():
+                loc: str | None = error.get("loc")
+                msg: str | None = error.get("msg")
+                if loc:
+                    print(f"- {loc[0]}: {msg}")
+                else:
+                    print(f"- {msg}")
+                continue
     return definitions
 
 
