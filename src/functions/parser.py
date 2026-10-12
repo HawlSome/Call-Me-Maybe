@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 18:43:49 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 19:26:20 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -100,7 +100,7 @@ def __store_function_callings(raw_promts: Any) -> list[FunctionCalling]:
         except ValidationError as e:
             print(f"\n[ERROR] - {e.__class__.__name__}:")
             for error in e.errors():
-                loc: str | None = error.get("loc")
+                loc: tuple[int | str, ...] | None = error.get("loc")
                 msg: str | None = error.get("msg")
                 if loc:
                     print(f"- {loc[0]}: {msg}")
@@ -129,7 +129,7 @@ def __srote_function_defs(raw_fd: Any) -> list[FunctionDefinition]:
         except ValidationError as e:
             print(f"\n[ERROR] - {e.__class__.__name__}:")
             for error in e.errors():
-                loc: str | None = error.get("loc")
+                loc: tuple[int | str, ...] | None = error.get("loc")
                 msg: str | None = error.get("msg")
                 if loc:
                     print(f"- {loc[0]}: {msg}")

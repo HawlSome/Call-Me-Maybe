@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 18:34:53 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/12 19:26:35 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     except ValidationError as e:
         print(f"\n[ERROR] - {e.__class__.__name__}:")
         for error in e.errors():
-            loc: str | None = error.get("loc")
+            loc: tuple[int | str, ...] | None = error.get("loc")
             msg: str | None = error.get("msg")
             if loc:
                 print(f"- {loc[0]}: {msg}")
