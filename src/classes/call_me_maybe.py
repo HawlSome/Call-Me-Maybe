@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 21:05:38 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/13 16:30:07 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -198,7 +198,8 @@ class CallMeMaybe(BaseModel):
             transition_state.parameter_key[1] == Types.FLOAT
         ):
             casted_parameter = str(float(parameter))
-            print(".0", end="", flush=True)
+            if "." not in parameter:
+                print(".0", end="", flush=True)
             parameter = parameter.replace(parameter, casted_parameter)
         parameter += ', '
         print()
