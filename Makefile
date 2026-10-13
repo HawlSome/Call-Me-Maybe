@@ -6,7 +6,7 @@
 #    By: varandri <varandri@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/14 10:11:34 by varandri          #+#    #+#              #
-#    Updated: 2026/10/12 19:54:33 by varandri         ###   ########.fr        #
+#    Updated: 2026/10/13 18:18:40 by varandri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,4 +49,4 @@ lint-strict:
 	@$(MYPY)  . --strict --exclude "llm_sdk/"
 
 
-.PHONY = run install clean lint lint-strict list
+.PHONY: run install clean lint lint-strict list
