@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 20:57:46 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/13 15:50:07 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -40,7 +40,7 @@ def get_options(
         func_names = get_function_names(caller.func_defs)
         allowed_options = np.array(
             sorted({
-                token for name in func_names
+                int(token) for name in func_names
                 if name.startswith(found_name) and
                 len(found_name) < len(name)
                 for token in model.encode_to_int(name[len(found_name):])
@@ -55,7 +55,7 @@ def get_options(
             number_str = '-.,0123456789'
             allowed_options = np.array(
                 sorted({
-                    token for ch in number_str
+                    int(token) for ch in number_str
                     for token in model.encode_to_int(ch)
                 }),
                 dtype=np.int64
@@ -64,7 +64,7 @@ def get_options(
             bool_str = ["true", "false"]
             allowed_options = np.array(
                 sorted({
-                    token for boolean in bool_str
+                    int(token) for boolean in bool_str
                     for token in model.encode_to_int(boolean)
                 }),
                 dtype=np.int64
