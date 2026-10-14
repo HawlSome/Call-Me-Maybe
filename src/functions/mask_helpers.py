@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/14 13:23:39 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 15:21:57 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -71,6 +71,8 @@ def get_options(
             vocab_size = model.get_vocab_size()
             allowed: list[int] = []
             for token in range(vocab_size):
+                if '\\"' in model.decode(token):
+                    continue
                 allowed.append(token)
             allowed_options = np.array(allowed, dtype=np.int64)
     return allowed_options

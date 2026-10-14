@@ -171,11 +171,11 @@ The parameters are read from the definition of the selected function, in order. 
 | `number` / float | tokens of `- . , 0-9` | a comma appears, or the token limit (10) is reached; the value is then cast with `float()` so it is always a valid number (`2` becomes `2.0`) |
 | `integer` | same digit mask | a comma or a `.` appears, or the token limit is reached |
 | `boolean` | tokens of `true` / `false` | the value is `true` or `false` |
-| `string` (and unknown types) | the whole vocabulary | the closing `"` is generated, or the token limit (100) is reached |
+| `string` (and unknown types) | the whole vocabulary except anything containing '\\"' | the closing `"` is generated, or the token limit (100) is reached |
 
 For strings, the opening quote is written by the program and the value is closed at the first closing quote the model produces, so the surrounding JSON stays valid.
 
-After each value, the program appends the next key to the prompt (`, "key":`) and moves on. Functions without parameters yield `"parameters": null`.
+After each value, the program appends the next key to the prompt (`, "key":`) and moves on. Functions without parameters yield `"parameters": {}`.
 
 ### Output
 
