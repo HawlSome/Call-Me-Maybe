@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/14 15:28:05 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 16:03:08 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -122,7 +122,7 @@ class CallMeMaybe(BaseModel):
         from ..functions import get_options
         self.__set_state()
         print(f'Prompt: {dumps(call)}')
-        print("Function Name: ", end="", flush=True)
+        print('Function Name: "', end="", flush=True)
         model: Llm = self.model
         func_name = ""
         max_token = 20
@@ -143,8 +143,8 @@ class CallMeMaybe(BaseModel):
             print(f"{decoded_token}", end="", flush=True)
             func_name += decoded_token
             encoded_prompt.append(best_token)
+        print('"')
         self.__set_state(States.PARAMS)
-        print()
         return dumps(func_name)
 
     def __get_current_parameter(self, encoded_prompt: list[int]) -> str:
