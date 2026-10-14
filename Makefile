@@ -6,7 +6,7 @@
 #    By: varandri <varandri@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/14 10:11:34 by varandri          #+#    #+#              #
-#    Updated: 2026/10/13 18:18:40 by varandri         ###   ########.fr        #
+#    Updated: 2026/10/14 13:57:18 by varandri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,13 +38,13 @@ debug: install
 clean:
 	@find . -type d -name "*cache*" | xargs rm -rf
 	
-lint:
+lint: install
 	@$(FLAKE8) . --exclude "llm_sdk/"
 	@$(MYPY)  . --exclude "llm_sdk/" --warn-return-any \
 	--warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs \
 	--check-untyped-defs
 
-lint-strict:
+lint-strict: install
 	@$(FLAKE8) . --exclude "llm_sdk/"
 	@$(MYPY)  . --strict --exclude "llm_sdk/"
 

@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/13 16:50:19 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 13:10:14 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -246,7 +246,10 @@ class CallMeMaybe(BaseModel):
             if i > 0 and k[1] == Types.STRING:
                 prompt_keys = model.encode_to_int(f', "{key}":"')
                 encoded_prompt.extend(prompt_keys)
-            parameter = self.__get_current_parameter(encoded_prompt)
+            try:
+                parameter = self.__get_current_parameter(encoded_prompt)
+            except ValueError:
+                raise ValueError
             func_parameters += f'"{key}": {parameter}'
         func_parameters = func_parameters.rstrip(', ')
         print()
@@ -298,4 +301,9 @@ class CallMeMaybe(BaseModel):
                     f"[ERROR] - {NameError.__name__}: "
                     f"the function '{name}' "
                     "doesn't exist in the function definitions."
+                )
+            except ValueError as e:
+                print(
+                    f"\n[ERROR] - {e.__class__.__name__}."
+                    "Can't store this function call."
                 )

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#   shebang: 1                                                                #
+#                                                                             #
 #                                                          :::      ::::::::  #
 #   model_mappers.py                                     :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:29:07 by varandri            #+#    #+#            #
-#   Updated: 2026/10/11 21:14:53 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 13:48:44 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -17,6 +17,7 @@ try:
     from typing import Any, cast
     from ..classes import FunctionDefinition
     from ..classes import Types
+    from json import dumps
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     exit()
@@ -57,7 +58,7 @@ def get_function_names(func_defs: list[FunctionDefinition]) -> list[str]:
         Function names in definition order.
     """
     return [
-        func.name for func in func_defs
+        dumps(func.name).rstrip('"').lstrip('"') for func in func_defs
     ]
 
 

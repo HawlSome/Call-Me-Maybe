@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 22:30:13 by varandri            #+#    #+#            #
-#   Updated: 2026/10/13 15:50:07 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 13:23:39 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -41,9 +41,7 @@ def get_options(
         allowed_options = np.array(
             sorted({
                 int(token) for name in func_names
-                if name.startswith(found_name) and
-                len(found_name) < len(name)
-                for token in model.encode_to_int(name[len(found_name):])
+                for token in model.encode_to_int(name)
             }),
             dtype=np.int64
         )

@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/14 10:11:43 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 19:26:35 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 14:06:00 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -22,6 +22,7 @@ try:
     from .classes import CallMeMaybe
     from pydantic import ValidationError
     from json import JSONDecodeError
+    import time
 except (ModuleNotFoundError, ImportError) as e:
     print(f"\n[ERROR] - {e.__class__.__name__}: Missing Module(s).")
     exit()
@@ -41,7 +42,10 @@ def main() -> None:
         func_defs=fn_defs,
         func_calls=prompts
     )
+    start = time.perf_counter()
     caller.call_functions(path_output=output)
+    end = time.perf_counter()
+    print(f"==> Finished the program in: {(end - start):.3f} s")
 
 
 if __name__ == "__main__":
