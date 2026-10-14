@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:15:04 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 19:54:33 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 14:58:52 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -92,13 +92,15 @@ def __store_function_callings(raw_promts: Any) -> list[FunctionCalling]:
         A list of validated ``FunctionCalling`` objects.
     """
     prompts: list[FunctionCalling] = []
-    for p in raw_promts:
+    for i in range(len(raw_promts)):
         try:
+            p = raw_promts[i]
             prompts.append(
                 FunctionCalling.model_validate(p)
             )
         except ValidationError as e:
             print(f"\n[ERROR] - {e.__class__.__name__}:")
+            print(f"<On Calling {i}>")
             for error in e.errors():
                 loc: tuple[int | str, ...] | None = error.get("loc")
                 msg: str | None = error.get("msg")
@@ -121,13 +123,15 @@ def __srote_function_defs(raw_fd: Any) -> list[FunctionDefinition]:
     """
     definitions: list[FunctionDefinition] = []
 
-    for fd in raw_fd:
+    for i in range(len(raw_fd)):
         try:
+            fd = raw_fd[i]
             definitions.append(
                 FunctionDefinition.model_validate(fd)
             )
         except ValidationError as e:
             print(f"\n[ERROR] - {e.__class__.__name__}:")
+            print(f"<On function definition {i}>")
             for error in e.errors():
                 loc: tuple[int | str, ...] | None = error.get("loc")
                 msg: str | None = error.get("msg")

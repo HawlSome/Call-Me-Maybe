@@ -195,7 +195,7 @@ Each decoded call is assembled into `{"prompt", "name", "parameters"}`, parsed w
 
 - **Accuracy:**  11/ 11 prompts with the correct function and arguments on the actual test set.
 - **Speed:** 1~2 minutes for the actual test set.
-- **Reliability:** the output is always valid JSON because the skeleton is program-generated, values are parsed before being stored, and numbers are normalized with `float()`. The function name is checked against the definitions before use. in some case of malformed string type value , it might fails.
+- **Reliability:** the output is always valid JSON because the skeleton is program-generated, values are parsed before being stored.. The function name is checked against the definitions before use. in some case of malformed string type value , the function call containing it is skipped (very rare case).
 
 ## Challenges faced
 |Challenge|Solution

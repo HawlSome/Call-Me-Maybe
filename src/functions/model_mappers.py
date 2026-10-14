@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:29:07 by varandri            #+#    #+#            #
-#   Updated: 2026/10/14 13:48:44 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 14:51:43 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -43,7 +43,7 @@ def __get_function_parameters(
         or is not found.
     """
     for func in func_defs:
-        if func.name == func_name:
+        if func.name == func_name and func.parameters:
             return func.parameters
     return None
 

@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/14 13:10:14 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 14:46:31 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -213,7 +213,7 @@ class CallMeMaybe(BaseModel):
             func_name: Name of the selected function.
 
         Returns:
-            The generated parameter fields, or ``"null"`` if there are none.
+            The generated parameter fields, or ``"{}"`` if there are none.
         """
         from ..functions import get_function_parameters_keys
         model: Llm = self.model
@@ -226,8 +226,8 @@ class CallMeMaybe(BaseModel):
         if param_keys:
             self.__set_state(States.PARAMS, param_keys[0])
         else:
-            print(' null\n')
-            return "null"
+            print(' {}\n')
+            return "{}"
         print()
         prompt: str = self.__get_prompt(call, func_name=func_name)
         prompt += "{"

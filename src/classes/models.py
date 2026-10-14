@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/14 14:43:02 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 14:51:54 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -44,7 +44,7 @@ class FunctionDefinition(BaseModel):
 
     name: str = Field(..., min_length=1)
     description: str = Field(...)
-    parameters: dict[str, dict[str, str]] | None = Field(...)
+    parameters: dict[str, dict[str, str]] = Field(...)
     returns: dict[str, str] = Field(...)
     model_config = ConfigDict(extra="forbid")
 
@@ -82,8 +82,6 @@ class FunctionDefinition(BaseModel):
                         "parameters: The format of parameters in functions"
                         " definition is invalid"
                     )
-        else:
-            self.parameters = None
         return self
 
     @model_validator(mode="after")
