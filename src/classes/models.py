@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/12 18:48:36 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/14 14:43:02 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -42,7 +42,7 @@ class FunctionDefinition(BaseModel):
         returns: Return schema describing the output value.
     """
 
-    name: str = Field(..., min_length=3)
+    name: str = Field(..., min_length=1)
     description: str = Field(...)
     parameters: dict[str, dict[str, str]] | None = Field(...)
     returns: dict[str, str] = Field(...)
@@ -115,7 +115,7 @@ class FunctionCalling(BaseModel):
     Attributes:
         prompt: User prompt to be translated into a function call.
     """
-    prompt: str = Field(..., min_length=5)
+    prompt: str = Field(..., min_length=1)
     model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="after")

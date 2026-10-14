@@ -1,9 +1,6 @@
 *This project has been created as part of the 42 curriculum by varandri.*
 
 # call me maybe
-
-Introduction to function calling in LLMs, using constrained decoding on a small language model (Qwen/Qwen3-0.6B).
-
 ## Description
 
 Large language models understand natural language but do not reliably produce structured, machine-executable output. A 0.6B-parameter model asked to emit JSON will often fail.
@@ -206,7 +203,7 @@ Each decoded call is assembled into `{"prompt", "name", "parameters"}`, parsed w
 **Knowing the values to mask.** Name, Parameters, numeric parameters and boolean parameters are masked differently|A State to track specific value maks for each one of the State types.
 **Knowing when a value ends.** Numbers, booleans, and strings end differently|A per-type stop function (`parameter_ending`) handles this, and the last string token is trimmed at its closing quote.
 **Number formatting.** The model may emit an int where the schema expects a float| Values are cast to `float` so when needed.
-**Generation Time** The program took over 5 minutes to generate the whole Json. | Jumps-forward-decoding was used to skip the generation for predictable charater/words, making the model generate only at part where multiple candidate exists for choice .
+**Generation Time** The program took over 5 minutes to generate the whole Json. | Jump-forward-decoding was used to skip the generation for predictable charater/words, making the model generate only at part where multiple candidate exists for choice .
 
 ## Testing strategy
 
@@ -220,7 +217,7 @@ Each decoded call is assembled into `{"prompt", "name", "parameters"}`, parsed w
 ### References
 
 - [Constrained Decoding](https://www.aidancooper.co.uk/constrained-decoding/): Explanation of constrained decoding
-- [Forward-Jump-Decoding](https://www.lmsys.org/blog/2024-02-05-compressed-fsm/): Explanation of Jump-Forward-Decoding
+- [Jump-Forward-Decoding](https://www.lmsys.org/blog/2024-02-05-compressed-fsm/): Explanation of Jump-Forward-Decoding
 - [Function Calling](https://developers.openai.com/api/docs/guides/function-calling?api-mode=responses): Explanation of function Calling
 - [Youtube](https://www.youtube.com/watch?v=7xTGNNLPyMI&t=1229s): Video explaining how AI works internally
 - [Pydantic](https://docs.pydantic.dev/): Documentation of Pydantic
@@ -229,6 +226,5 @@ Each decoded call is assembled into `{"prompt", "name", "parameters"}`, parsed w
 
 ### Use of AI
 
-- explaining constrained decoding concepts — call_me_maybe.py, mask_helpers.py
 - suggesting test cases — the whole project
 - improving the structure of the README — README.md
