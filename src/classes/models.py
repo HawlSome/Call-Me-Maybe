@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/14 14:51:54 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/15 16:49:04 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -113,6 +113,7 @@ class FunctionCalling(BaseModel):
     Attributes:
         prompt: User prompt to be translated into a function call.
     """
+
     prompt: str = Field(..., min_length=1)
     model_config = ConfigDict(extra="forbid")
 
@@ -142,5 +143,6 @@ class TransitionState(BaseModel):
             extraction.
         parameter_key: Current parameter name and expected type, if any.
     """
+
     state: States = Field(default=States.NAME)
     parameter_key: tuple[str, Types] | None = Field(default=None)
