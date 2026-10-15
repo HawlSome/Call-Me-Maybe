@@ -7,7 +7,7 @@
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/10/05 11:20:32 by varandri            #+#    #+#            #
-#   Updated: 2026/10/14 16:03:08 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/15 16:55:52 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -165,7 +165,7 @@ class CallMeMaybe(BaseModel):
             transition_state.parameter_key and
             transition_state.parameter_key[1] in [Types.INT, Types.FLOAT]
         ):
-            max_token = 10
+            max_token = 30
         if (
             transition_state.parameter_key and
             transition_state.parameter_key[1] == Types.STRING

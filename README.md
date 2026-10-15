@@ -52,7 +52,7 @@ The function is chosen by the LLM itself, and the structure of the output is enf
 
 ### Requirements
 
-- Python 3.10 or later
+- Python 3.11 or later
 - [uv](https://docs.astral.sh/uv/)
 - Dependencies (installed by `uv sync`): `numpy`, `pydantic`
 - The `llm_sdk` package, copied at the repository root next to `src/`
@@ -168,7 +168,7 @@ The parameters are read from the definition of the selected function, in order. 
 
 | Type (from definition) | Allowed tokens | Stop condition |
 |---|---|---|
-| `number` / float | tokens of `- . , 0-9` | a comma appears, or the token limit (10) is reached; the value is then cast with `float()` so it is always a valid number (`2` becomes `2.0`) |
+| `number` / float | tokens of `- . , 0-9` | a comma appears, or the token limit (30) is reached; the value is then cast with `float()` so it is always a valid number (`2` becomes `2.0`) |
 | `integer` | same digit mask | a comma or a `.` appears, or the token limit is reached |
 | `boolean` | tokens of `true` / `false` | the value is `true` or `false` |
 | `string` (and unknown types) | the whole vocabulary except anything containing '\\"' | the closing `"` is generated, or the token limit (100) is reached |
@@ -202,7 +202,7 @@ Each decoded call is assembled into `{"prompt", "name", "parameters"}`, parsed w
 |---------|--------
 **Knowing the values to mask.** Name, Parameters, numeric parameters and boolean parameters are masked differently|A State to track specific value maks for each one of the State types.
 **Knowing when a value ends.** Numbers, booleans, and strings end differently|A per-type stop function (`parameter_ending`) handles this, and the last string token is trimmed at its closing quote.
-**Number formatting.** The model may emit an int where the schema expects a float| Values are cast to `float` so when needed.
+**Number formatting.** The model may emit an int where the schema expects a float| Values are cast to `float` when needed.
 **Generation Time** The program took over 5 minutes to generate the whole Json. | Jump-forward-decoding was used to skip the generation for predictable charater/words, making the model generate only at part where multiple candidate exists for choice .
 
 ## Testing strategy
