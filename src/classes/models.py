@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ########################################################################### #
-#                                                                             #
+#   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
 #   models.py                                            :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: varandri <varandri@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 19:17:30 by varandri            #+#    #+#            #
-#   Updated: 2026/10/15 16:49:04 by varandri           ###   ########.fr      #
+#   Updated: 2026/10/20 23:29:42 by varandri           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -129,8 +129,8 @@ class FunctionCalling(BaseModel):
         """
         if not self.prompt.strip():
             raise ValueError(
-                "prompt: The format of parameters in functions"
-                " definition is invalid"
+                "prompt: The format of parameters in function"
+                " calls is invalid"
             )
         return self
 
