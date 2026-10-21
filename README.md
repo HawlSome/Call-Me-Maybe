@@ -203,7 +203,7 @@ Each decoded call is assembled into `{"prompt", "name", "parameters"}`, parsed w
 **Knowing the values to mask.** Name, Parameters, numeric parameters and boolean parameters are masked differently|A State to track specific value maks for each one of the State types.
 **Knowing when a value ends.** Numbers, booleans, and strings end differently|A per-type stop function (`parameter_ending`) handles this, and the last string token is trimmed at its closing quote.
 **Number formatting.** The model may emit an int where the schema expects a float| Values are cast to `float` when needed.
-**Generation Time** The program took over 5 minutes to generate the whole Json. | Jump-forward-decoding was used to skip the generation for predictable charater/words, making the model generate only at part where multiple candidate exists for choice .
+**Generation Time.** The program took over 5 minutes to generate the whole Json. | Jump-forward-decoding was used to skip the generation for predictable charater/words, making the model generate only at part where multiple candidate exists for choice .
 
 ## Testing strategy
 
